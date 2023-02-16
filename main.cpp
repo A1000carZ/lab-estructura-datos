@@ -17,7 +17,7 @@ void cleanList(int[], int n);
 void searchItem(int[], int n);
 void searchAndReplaceItem(int[], int n);
 int insertFirstIndex(int[], int lastIndex);
-void insertLastIndex(int[]);
+int insertLastIndex(int[], int sizeList);
 void insertMiddleIndex(int[]);
 
 int main()
@@ -52,7 +52,7 @@ int main()
         cout << "\t0. Imprimir lista" << endl;
         cout << "\t1. Asignar manualmente datos a la lista" << endl;
         cout << "\t2. Asignar aleatoriamente datos a la lista" << endl;
-        cout << "\t3. imprimir" << endl;
+        cout << "\t3. Obtener la sumatoria de la lista" << endl;
         cout << "\t4. Obtener el valor maximo de la lista" << endl;
         cout << "\t5. Obtener el valor minimo de la lista" << endl;
         cout << "\t6. Obtener el valor promedio de la lista" << endl;
@@ -61,6 +61,7 @@ int main()
         cout << "\t9. Buscar un valor en la lista" << endl;
         cout << "\t10. Buscar un valor en la lista y modificarlo" << endl;
         cout << "\t11. Insertar un valor al principio de la lista" << endl;
+        cout << "\t12. Insertar un valor al final de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
 
@@ -121,7 +122,8 @@ int main()
             endOperation(choice);
             break;
         case 12:
-            searchAndReplaceItem(array, sizeList);
+            lastIndex = insertLastIndex(array, sizeList);
+            sizeList = lastIndex;
             endOperation(choice);
             break;
         case 13:
@@ -378,7 +380,6 @@ int insertFirstIndex(int array[], int lastIndex)
             }
         }
         imprimir(array, (lastIndex));
-        cout << lastIndex;
         cout << endl
              << "\tDeseas agregar otro dato?" << endl;
         cout << "\t[s] si [n] no ";
@@ -392,10 +393,56 @@ int insertFirstIndex(int array[], int lastIndex)
             {
                 isReturn = false;
             }
-        }else{
-            cout << endl<<"\tNo pudimos procesar su respuesta"<<endl;
+        }
+        else
+        {
+            cout << endl
+                 << "\tNo pudimos procesar su respuesta" << endl;
             isReturn = true;
         }
     }
     return lastIndex;
+}
+
+int insertLastIndex(int array[], int sizeList)
+{
+    int number;
+    char answer;
+    bool isReturn = false;
+
+    while (!isReturn)
+    {
+        if (sizeList < 29)
+        {
+            sizeList++;
+            cout << "\tIngrese el dato a agregar: ";
+            cin >> array[sizeList - 1];
+        }
+        else
+        {
+            cout << "\tYa no puedes agregar mas datos \n";
+        }
+        imprimir(array, (sizeList));
+        cout << endl
+             << "\tDeseas agregar otro dato?" << endl;
+        cout << "\t[s] si [n] no ";
+        cin >> answer;
+        cout << endl;
+        if (answer == 'n' || answer == 's')
+        {
+            if (answer == 'n')
+                isReturn = true;
+            else
+            {
+                isReturn = false;
+            }
+        }
+        else
+        {
+            cout << endl
+                 << "\tNo pudimos procesar su respuesta" << endl;
+            isReturn = true;
+        }
+    }
+    return sizeList;
 }
