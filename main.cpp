@@ -15,7 +15,7 @@ float getProm(int[], int n);
 void getValuesHigherProm(int[], int n);
 void cleanList(int[], int n);
 int searchItem(int[], int sizeList, int item);
-void searchFunction(int[],int sizeList);
+void searchFunction(int[], int sizeList);
 void searchAndReplaceItem(int[], int n);
 int insertFirstIndex(int[], int lastIndex);
 int insertLastIndex(int[], int sizeList);
@@ -63,6 +63,7 @@ int main()
         cout << "\t10. Buscar un valor en la lista y modificarlo" << endl;
         cout << "\t11. Insertar un valor al principio de la lista" << endl;
         cout << "\t12. Insertar un valor al final de la lista" << endl;
+        cout << "\t13. Insertar un valor en medio de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
 
@@ -110,7 +111,7 @@ int main()
             endOperation(choice);
             break;
         case 9:
-            searchFunction(array,sizeList);
+            searchFunction(array, sizeList);
             endOperation(choice);
             break;
         case 10:
@@ -305,23 +306,21 @@ void cleanList(int array[], int n)
 
 int searchItem(int array[], int sizeList, int item)
 {
-    bool founded = false;
-    for (int i = 0; i < sizeList; i++)
+    int i, Rpos = -1, flag = 0;
+    for (i = 0; i < sizeList; i++)
     {
         if (array[i] == item)
         {
-            founded = true;
+            flag = 1;
+            Rpos = i;
+            break;
         }
     }
-
-    if (founded)
+    if (flag == 0)
     {
-        return item;
+        cout << "El valor no se encontro por ningun lado\n";
     }
-    else
-    {
-        return -1;
-    }
+    return Rpos;
 }
 
 void searchAndReplaceItem(int array[], int n)
@@ -466,41 +465,52 @@ int insertMiddleIndex(int array[], int sizeList)
 
     imprimir(array, sizeList);
 
-    cout << "\tQuiero que insertes enmedio de ";
+    cout << "\tQuiero que insertes en medio de" << endl;
+    cout << "\t";
     cin >> input1;
-    cout << " y ";
+    cout << "\t y ";
+    cout << "\t";
     cin >> input2;
 
     int value1 = searchItem(array, sizeList, input1);
-
     int value2 = searchItem(array, sizeList, input2);
+
+    cout << "\t" << value1 << "\t y " << endl
+         << "\n\t" << value2;
 
     cout << endl;
 
-    if (value1 != -1 && value2 != -1)
+    if (value1 == -1 || value2 == -1)
     {
-        srand(time(NULL));
-        temp = sizeList + 1;
-        if (temp > 20)
+        cout << "\tAlguno de los valores no se encuentra en la lista." << endl;
+    }
+    else if (abs(value1 - value2) == 1)
+    {
+        int middleIndex = (value1 + value2) / 2;
+        if (sizeList >= 30)
         {
-            cout << "Los valores no pueden agregarce\n";
+            cout << "Ya no puedes agregar mas valores\n";
         }
         else
         {
-            for (i = 1; i <= 1; i++)
+            for (i = 1; i <= 2; i++)
             {
                 sizeList++;
-                for (j = sizeList; j > value1; j--)
+                for (j = sizeList; j > middleIndex; j--)
                 {
                     array[j] = array[j - 1];
                 }
             }
-            for (k = value1; k < value1 + 1; k++)
+            for (k = middleIndex + 1; k < middleIndex + 3; k++)
             {
                 cout << "\tIngrese el dato a agregar: ";
                 cin >> array[k];
             }
         }
+    }
+    else
+    {
+        cout << "\tLos valores no estan adyacentes." << endl;
     }
 
     return sizeList;
