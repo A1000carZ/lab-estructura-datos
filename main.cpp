@@ -20,6 +20,8 @@ void searchAndReplaceItem(int[], int n);
 int insertFirstIndex(int[], int lastIndex);
 int insertLastIndex(int[], int sizeList);
 int insertMiddleIndex(int[], int sizeList);
+int deleteFirstIndex(int[], int sizeList);
+int deleteLastIndex(int[], int sizeList);
 
 int main()
 {
@@ -29,7 +31,7 @@ int main()
     cout << endl
          << "\t\tOperaciones con arreglos" << endl
          << endl;
-    cout << "\t¿Cuantos datos quieres manejar en tu lista? : ";
+    cout << "\tCuantos datos quieres manejar en tu lista? : ";
 
     cin >> sizeList;
 
@@ -64,6 +66,8 @@ int main()
         cout << "\t11. Insertar un valor al principio de la lista" << endl;
         cout << "\t12. Insertar un valor al final de la lista" << endl;
         cout << "\t13. Insertar un valor en medio de la lista" << endl;
+        cout << "\t15. Eliminar el primero de la lista" << endl;
+        cout << "\t16. Eliminar el ultimo de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
 
@@ -137,6 +141,14 @@ int main()
             searchAndReplaceItem(array, sizeList);
             endOperation(choice);
             break;
+        case 15:
+            lastIndex = deleteFirstIndex(array, sizeList);
+            sizeList = lastIndex;
+            endOperation(choice);
+        case 16:
+            lastIndex = deleteLastIndex(array, sizeList);
+            sizeList = lastIndex;
+            endOperation(choice);
         default:
             break;
         }
@@ -513,5 +525,22 @@ int insertMiddleIndex(int array[], int sizeList)
         cout << "\tLos valores no estan adyacentes." << endl;
     }
 
+    return sizeList;
+}
+
+int deleteFirstIndex(int array[], int sizeList)
+{
+    int i;
+    for (i = 0; i < sizeList - 1; i++)
+    {
+        array[i] = array[i+1];
+    }
+    return sizeList;
+}
+
+int deleteLastIndex(int array[], int sizeList)
+{
+    array[sizeList] = 0;
+    sizeList--;
     return sizeList;
 }
