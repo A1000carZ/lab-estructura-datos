@@ -14,16 +14,17 @@ int getMin(int[], int n);
 float getProm(int[], int n);
 void getValuesHigherProm(int[], int n);
 void cleanList(int[], int n);
-void searchItem(int[], int n);
+int searchItem(int[], int sizeList, int item);
+void searchFunction(int[],int sizeList);
 void searchAndReplaceItem(int[], int n);
 int insertFirstIndex(int[], int lastIndex);
 int insertLastIndex(int[], int sizeList);
-void insertMiddleIndex(int[]);
+int insertMiddleIndex(int[], int sizeList);
 
 int main()
 {
 
-    int choice, sizeList, lastIndex = 0;
+    int choice, sizeList, lastIndex = 0, item;
 
     cout << endl
          << "\t\tOperaciones con arreglos" << endl
@@ -109,7 +110,7 @@ int main()
             endOperation(choice);
             break;
         case 9:
-            searchItem(array, sizeList);
+            searchFunction(array,sizeList);
             endOperation(choice);
             break;
         case 10:
@@ -127,7 +128,8 @@ int main()
             endOperation(choice);
             break;
         case 13:
-            searchAndReplaceItem(array, sizeList);
+            lastIndex = insertMiddleIndex(array, sizeList);
+            sizeList = lastIndex;
             endOperation(choice);
             break;
         case 14:
@@ -140,6 +142,22 @@ int main()
     }
 
     return 0;
+}
+
+void searchFunction(int array[], int sizeList)
+{
+    int item;
+    cout << "\tIngresa el numero a buscar: ";
+    cin >> item;
+    int n = searchItem(array, sizeList, item);
+    if (n != -1)
+    {
+        cout << "\tEl numero " << item << " se encuentra en la lista!" << endl;
+    }
+    else
+    {
+        cout << "\tLo siento no lo he encontrado" << endl;
+    }
 }
 
 void endOperation(int choice)
@@ -285,14 +303,9 @@ void cleanList(int array[], int n)
     imprimir(array, n);
 }
 
-void searchItem(int array[], int sizeList)
+int searchItem(int array[], int sizeList, int item)
 {
-
-    int item;
     bool founded = false;
-    cout << "\tIngresa el numero a buscar: ";
-    cin >> item;
-    cout << endl;
     for (int i = 0; i < sizeList; i++)
     {
         if (array[i] == item)
@@ -303,11 +316,11 @@ void searchItem(int array[], int sizeList)
 
     if (founded)
     {
-        cout << "\tEl numero " << item << " se encuentra en la lista!" << endl;
+        return item;
     }
     else
     {
-        cout << "\tLo siento no lo he encontrado" << endl;
+        return -1;
     }
 }
 
@@ -444,5 +457,51 @@ int insertLastIndex(int array[], int sizeList)
             isReturn = true;
         }
     }
+    return sizeList;
+}
+
+int insertMiddleIndex(int array[], int sizeList)
+{
+    int temp, i, j, k, input1, input2;
+
+    imprimir(array, sizeList);
+
+    cout << "\tQuiero que insertes enmedio de ";
+    cin >> input1;
+    cout << " y ";
+    cin >> input2;
+
+    int value1 = searchItem(array, sizeList, input1);
+
+    int value2 = searchItem(array, sizeList, input2);
+
+    cout << endl;
+
+    if (value1 != -1 && value2 != -1)
+    {
+        srand(time(NULL));
+        temp = sizeList + 1;
+        if (temp > 20)
+        {
+            cout << "Los valores no pueden agregarce\n";
+        }
+        else
+        {
+            for (i = 1; i <= 1; i++)
+            {
+                sizeList++;
+                for (j = sizeList; j > value1; j--)
+                {
+                    array[j] = array[j - 1];
+                }
+            }
+            for (k = value1; k < value1 + 1; k++)
+            {
+                cout << "\tIngrese el dato a agregar: ";
+                cin >> array[k];
+            }
+        }
+    }
+
     return sizeList;
 }
