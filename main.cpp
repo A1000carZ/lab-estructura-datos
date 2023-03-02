@@ -24,7 +24,7 @@ int deleteFirstIndex(int[], int sizeList);
 int deleteLastIndex(int[], int sizeList);
 void bubbleSort(int[], int sizeList);
 void directInsertionSort(int[], int sizeList);
-
+void binaryInsertionSort(int[], int sizeList);
 int main()
 {
     int choice, sizeList, lastIndex = 0, item;
@@ -71,7 +71,9 @@ int main()
         cout << "\t16. Eliminar el ultimo de la lista" << endl;
         cout << "\t17. Bubble sort" << endl;
         cout << "\t18. Direct Insertion Sort" << endl;
-        cout << "\t19. Eliminar el ultimo de la lista" << endl;
+        cout << "\t19. Binary Insertion Sort" << endl;
+        cout << "\t20. Shaker Sort" << endl;
+        cout << "\t21. Eliminar el ultimo de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
         cin >> choice;
@@ -156,6 +158,8 @@ int main()
             bubbleSort(array, sizeList);
         case 18:
             directInsertionSort(array,sizeList);
+        case 19:
+            binaryInsertionSort(array,sizeList);
         default:
             break;
         }
@@ -602,4 +606,31 @@ void directInsertionSort(int array[], int sizeList)
     }
 }
 
-
+void binaryInsertionSort(int array[],int sizeList){
+    for (int i = 0; i < sizeList; i++){
+        cout << "\tPasada No. "<< i+1<<endl;
+        int element = array[i];
+        int left = 0, right = i - 1;
+        while (left <= right)
+        {
+            int mid = (left + right) / 2;
+            cout << "\t" << element <<" < " << array[mid];
+            if (array[mid] > element)
+            {
+                cout << " V "<<endl;
+                right = mid - 1;
+            }
+            else
+            {
+                cout << " F"<<endl;
+                left = mid + 1;
+            }
+        }
+        for (int j = i - 1; j >= left; j--)
+        {
+            array[j + 1] = array[j];
+        }
+        array[left] = element;
+        imprimir(array,sizeList);
+    }
+}
