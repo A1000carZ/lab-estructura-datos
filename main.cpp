@@ -22,10 +22,11 @@ int insertLastIndex(int[], int sizeList);
 int insertMiddleIndex(int[], int sizeList);
 int deleteFirstIndex(int[], int sizeList);
 int deleteLastIndex(int[], int sizeList);
+void bubbleSort(int[], int sizeList);
+void directInsertionSort(int[], int sizeList);
 
 int main()
 {
-
     int choice, sizeList, lastIndex = 0, item;
 
     cout << endl
@@ -68,9 +69,11 @@ int main()
         cout << "\t13. Insertar un valor en medio de la lista" << endl;
         cout << "\t15. Eliminar el primero de la lista" << endl;
         cout << "\t16. Eliminar el ultimo de la lista" << endl;
+        cout << "\t17. Bubble sort" << endl;
+        cout << "\t18. Direct Insertion Sort" << endl;
+        cout << "\t19. Eliminar el ultimo de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
-
         cin >> choice;
 
         cout << endl;
@@ -149,6 +152,10 @@ int main()
             lastIndex = deleteLastIndex(array, sizeList);
             sizeList = lastIndex;
             endOperation(choice);
+        case 17:
+            bubbleSort(array, sizeList);
+        case 18:
+            directInsertionSort(array,sizeList);
         default:
             break;
         }
@@ -533,7 +540,7 @@ int deleteFirstIndex(int array[], int sizeList)
     int i;
     for (i = 0; i < sizeList - 1; i++)
     {
-        array[i] = array[i+1];
+        array[i] = array[i + 1];
     }
     return sizeList;
 }
@@ -544,3 +551,55 @@ int deleteLastIndex(int array[], int sizeList)
     sizeList--;
     return sizeList;
 }
+
+void bubbleSort(int array[], int sizeList)
+{
+    for (int i = 0; i < sizeList - 1; i++)
+    {
+        cout << "\tPasada No. " << i + 1 << endl;
+        for (int j = 0; j < sizeList - 1; j++)
+        {
+            cout << "\t" << array[j] << " > " << array[j + 1] << " ";
+            if (array[j] > array[j + 1])
+            {
+                cout << "V ";
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+                imprimir(array, sizeList);
+            }
+            else
+            {
+                cout << "F ";
+                imprimir(array, sizeList);
+            }
+        }
+    }
+}
+
+void directInsertionSort(int array[], int sizeList)
+{
+    for (int i = 0; i < sizeList; i++)
+    {
+        cout << "\tPasada No. "<< i+1<<endl;
+        int element = array[i];
+        for(int j=0; j < i+1; j++){
+            cout << "\t"<<element<<" < "<<array[j+1];
+            if (element < array[j])
+            {
+                cout << " V ";
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+                imprimir(array, sizeList);
+            }
+            else
+            {
+                cout << " F ";
+                imprimir(array, sizeList);
+            }
+        }
+    }
+}
+
+
