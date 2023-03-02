@@ -25,6 +25,8 @@ int deleteLastIndex(int[], int sizeList);
 void bubbleSort(int[], int sizeList);
 void directInsertionSort(int[], int sizeList);
 void binaryInsertionSort(int[], int sizeList);
+void directSelectionSort(int[], int sizeList);
+
 int main()
 {
     int choice, sizeList, lastIndex = 0, item;
@@ -72,7 +74,7 @@ int main()
         cout << "\t17. Bubble sort" << endl;
         cout << "\t18. Direct Insertion Sort" << endl;
         cout << "\t19. Binary Insertion Sort" << endl;
-        cout << "\t20. Shaker Sort" << endl;
+        cout << "\t20. Direct Selection Sort" << endl;
         cout << "\t21. Eliminar el ultimo de la lista" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
@@ -157,9 +159,11 @@ int main()
         case 17:
             bubbleSort(array, sizeList);
         case 18:
-            directInsertionSort(array,sizeList);
+            directInsertionSort(array, sizeList);
         case 19:
-            binaryInsertionSort(array,sizeList);
+            binaryInsertionSort(array, sizeList);
+        case 20:
+            directSelectionSort(array, sizeList);
         default:
             break;
         }
@@ -585,10 +589,11 @@ void directInsertionSort(int array[], int sizeList)
 {
     for (int i = 0; i < sizeList; i++)
     {
-        cout << "\tPasada No. "<< i+1<<endl;
+        cout << "\tPasada No. " << i + 1 << endl;
         int element = array[i];
-        for(int j=0; j < i+1; j++){
-            cout << "\t"<<element<<" < "<<array[j+1];
+        for (int j = 0; j < i + 1; j++)
+        {
+            cout << "\t" << element << " < " << array[j + 1];
             if (element < array[j])
             {
                 cout << " V ";
@@ -606,23 +611,25 @@ void directInsertionSort(int array[], int sizeList)
     }
 }
 
-void binaryInsertionSort(int array[],int sizeList){
-    for (int i = 0; i < sizeList; i++){
-        cout << "\tPasada No. "<< i+1<<endl;
+void binaryInsertionSort(int array[], int sizeList)
+{
+    for (int i = 0; i < sizeList; i++)
+    {
+        cout << "\tPasada No. " << i + 1 << endl;
         int element = array[i];
         int left = 0, right = i - 1;
         while (left <= right)
         {
             int mid = (left + right) / 2;
-            cout << "\t" << element <<" < " << array[mid];
+            cout << "\t" << element << " < " << array[mid];
             if (array[mid] > element)
             {
-                cout << " V "<<endl;
+                cout << " V " << endl;
                 right = mid - 1;
             }
             else
             {
-                cout << " F"<<endl;
+                cout << " F" << endl;
                 left = mid + 1;
             }
         }
@@ -631,6 +638,31 @@ void binaryInsertionSort(int array[],int sizeList){
             array[j + 1] = array[j];
         }
         array[left] = element;
-        imprimir(array,sizeList);
+        imprimir(array, sizeList);
+    }
+}
+
+void directSelectionSort(int array[], int sizeList)
+{
+    for (int i = 0; i < sizeList - 1; i++)
+    {
+        int minIndex = i;
+
+        for (int j = i + 1; j < sizeList; j++)
+        {
+            if (array[j] < array[minIndex])
+            {
+                cout << "\tdato: " << array[minIndex] << " menor:" << array[j];
+                cout << "  posDato: "<<minIndex<<" posMin: "<<j;
+                minIndex = j;
+                imprimir(array, sizeList);
+            }
+        }
+        if (minIndex != i)
+        {
+            int temp = array[i];
+            array[i] = array[minIndex];
+            array[minIndex] = temp;
+        }
     }
 }
