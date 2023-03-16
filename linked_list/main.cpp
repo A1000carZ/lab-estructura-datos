@@ -16,6 +16,8 @@ void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
 void totalSum(Node *node);
 void searchAndReplace(Node *node);
+Node *insertBeforeNum(Node*node);
+Node *insertAfterNum(Node*node);
 
 int main()
 {
@@ -36,7 +38,8 @@ int main()
         cout << "\t5. Insertar nodos aleatorios a la izquierda" << endl;
         cout << "\t6. Mostrar sumatoria total" << endl;
         cout << "\t7. Buscar un valor" << endl;
-
+        cout << "\t8. Insertar nodo antes del nodo" << endl;
+        cout << "\t9. Insertar nodo despues del nodo" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
         cin >> answer;
@@ -62,6 +65,12 @@ int main()
             break;
         case 7:
             searchAndReplace(node);
+            break;
+        case 8:
+            node = insertBeforeNum(node);
+            break;
+        case 9:
+            node = insertAfterNum(node);
             break;
         default:
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
@@ -208,4 +217,61 @@ void searchAndReplace(Node *node)
     {
         cout << "\tLo siento el numero " << value << " no se encuentra en la lista" << endl;
     }
+}
+
+Node *insertBeforeNum(Node *node)
+{
+    int value, newValue;
+    cout << "\tIngresa el numero antes del cual quieres agregar el nuevo numero: ";
+    cin >> value;
+    cout << "\tIngresa el nuevo numero: ";
+    cin >> newValue;
+    Node *temp = node;
+    Node *prev = NULL;
+    while (temp != NULL)
+    {
+        if (temp->value == value)
+        {
+            Node *newNode = new (Node);
+            newNode->value = newValue;
+            newNode->right = temp;
+            if (prev == NULL)
+            {
+                return newNode;
+            }
+            else
+            {
+                prev->right = newNode;
+                return node;
+            }
+        }
+        prev = temp;
+        temp = temp->right;
+    }
+    cout << "\tNo se encontro el numero " << value << endl;
+    return node;
+}
+
+Node *insertAfterNum(Node *node)
+{
+    int value, newValue;
+    cout << "\tIngresa el numero despues del cual quieres agregar el nuevo numero: ";
+    cin >> value;
+    cout << "\tIngresa el nuevo numero: ";
+    cin >> newValue;
+    Node *temp = node;
+    while (temp != NULL)
+    {
+        if (temp->value == value)
+        {
+            Node *newNode = new (Node);
+            newNode->value = newValue;
+            newNode->right = temp->right;
+            temp->right = newNode;
+            return node;
+        }
+        temp = temp->right;
+    }
+    cout << "\tNo se encontro el numero " << value << endl;
+    return node;
 }
