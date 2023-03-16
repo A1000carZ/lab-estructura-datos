@@ -15,6 +15,7 @@ Node *insertLeft(Node *node);
 void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
 void totalSum(Node *node);
+void searchAndReplace(Node *node);
 
 int main()
 {
@@ -34,6 +35,7 @@ int main()
         cout << "\t4. Insertar nodos aleatorios a la derecha" << endl;
         cout << "\t5. Insertar nodos aleatorios a la izquierda" << endl;
         cout << "\t6. Mostrar sumatoria total" << endl;
+        cout << "\t7. Buscar un valor" << endl;
 
         cout << endl
              << "\tSelecciona una opcion: ";
@@ -57,6 +59,9 @@ int main()
             break;
         case 6:
             totalSum(node);
+            break;
+        case 7:
+            searchAndReplace(node);
             break;
         default:
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
@@ -87,8 +92,9 @@ void printNode(Node *node)
     cout << "\t";
     while (temp != NULL)
     {
-        cout << "( " << temp->value << " )"
-             << "-";
+        cout << temp->value;
+        if(temp->right != NULL)
+            cout << " 👉 ";
         temp = temp->right;
     }
     cout << endl;
@@ -166,6 +172,40 @@ void totalSum(Node *node)
         temp = temp->right;
         /* code */
     }
-    cout << "\tLa sumatoria total es de: " << sum<<endl;
+    cout << "\tLa sumatoria total es de: " << sum << endl;
     sleep(3);
+}
+
+void searchAndReplace(Node *node)
+{
+    Node *temp = node;
+    int value, newValue;
+    char answer;
+    bool founded = false;
+    cout << "\tIngresa el numero a buscar: ";
+    cin >> value;
+    cout << endl;
+    while (temp != NULL)
+    {
+        if (temp->value == value)
+        {
+            founded = true;
+            cout << "\tEl numero " << value << " esta en la lista!" << endl;
+            cout << "\tLo deseas reemplazar [s] si | [n] no : ";
+            cin >>answer;
+            cout << endl;
+            if(answer == 's' || answer == 'S'){
+                cout<< "\tIngresa el nuevo valor: ";
+                cin >> newValue;
+                temp->value = newValue;
+                value = newValue;
+            }
+            break;
+        }
+        temp = temp->right;
+    }
+    if (!founded)
+    {
+        cout << "\tLo siento el numero " << value << " no se encuentra en la lista" << endl;
+    }
 }
