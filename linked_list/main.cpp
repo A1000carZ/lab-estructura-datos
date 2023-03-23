@@ -16,14 +16,18 @@ void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
 void totalSum(Node *node);
 void searchAndReplace(Node *node);
-Node *insertBeforeNum(Node*node);
-Node *insertAfterNum(Node*node);
-
+Node *insertBeforeNum(Node *node);
+Node *insertAfterNum(Node *node);
+Node *deleteLastNode(Node *node);
+Node *deleteFirstNode(Node *node);
+Node *findAndDeleteNode(Node *node);
+bool searchNode(int value, Node *node);
 int main()
 {
 
     Node *node = new (Node);
     node->value = 0;
+    node->right = NULL;
     int answer;
 
     while (1)
@@ -40,6 +44,9 @@ int main()
         cout << "\t7. Buscar un valor" << endl;
         cout << "\t8. Insertar nodo antes del nodo" << endl;
         cout << "\t9. Insertar nodo despues del nodo" << endl;
+        cout << "\t10. Eliminar el ultimo nodo" << endl;
+        cout << "\t11. Eliminar el primer nodo" << endl;
+        cout << "\t12. Eliminar nodo especifico" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
         cin >> answer;
@@ -72,6 +79,15 @@ int main()
         case 9:
             node = insertAfterNum(node);
             break;
+        case 10:
+            node = deleteLastNode(node);
+            break;
+        case 11:
+            node = deleteFirstNode(node);
+            break;
+        case 12:
+            node = findAndDeleteNode(node);
+            break;
         default:
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
             break;
@@ -81,6 +97,22 @@ int main()
     }
 
     return 0;
+}
+
+bool searchNode(int value, Node *node)
+{
+    Node *temp;
+    temp = node;
+    bool founded = false;
+    while (temp != NULL)
+    {
+        if (temp->value == value)
+        {
+            founded = true;
+            break;
+        }
+    }
+    return founded;
 }
 
 void printNode(Node *node)
@@ -102,7 +134,7 @@ void printNode(Node *node)
     while (temp != NULL)
     {
         cout << temp->value;
-        if(temp->right != NULL)
+        if (temp->right != NULL)
             cout << " 👉 ";
         temp = temp->right;
     }
@@ -201,10 +233,11 @@ void searchAndReplace(Node *node)
             founded = true;
             cout << "\tEl numero " << value << " esta en la lista!" << endl;
             cout << "\tLo deseas reemplazar [s] si | [n] no : ";
-            cin >>answer;
+            cin >> answer;
             cout << endl;
-            if(answer == 's' || answer == 'S'){
-                cout<< "\tIngresa el nuevo valor: ";
+            if (answer == 's' || answer == 'S')
+            {
+                cout << "\tIngresa el nuevo valor: ";
                 cin >> newValue;
                 temp->value = newValue;
                 value = newValue;
@@ -273,5 +306,96 @@ Node *insertAfterNum(Node *node)
         temp = temp->right;
     }
     cout << "\tNo se encontro el numero " << value << endl;
+    return node;
+}
+
+Node *deleteLastNode(Node *node)
+{
+    Node *temp;
+    Node *lastNode;
+    temp = node;
+    if (temp->right == NULL)
+    {
+        delete (temp);
+        node = NULL;
+    }
+    else
+    {
+        while (temp->right != NULL)
+        {
+            lastNode = temp;
+            temp = temp->right;
+        }
+        lastNode->right = NULL;
+        delete (temp);
+    }
+
+    return node;
+}
+
+Node *deleteFirstNode(Node *node)
+{
+    Node *temp;
+    Node *initialNode;
+    temp = node;
+    if (temp->right == NULL)
+    {
+        delete (temp);
+        node = NULL;
+    }
+    else
+    {
+        node = node->right;
+        temp->right = NULL;
+        delete (temp);
+    }
+    return node;
+}
+
+Node *findAndDeleteNode(Node *node)
+{
+    Node *temp;
+    temp = node;
+    Node *beforeNode = NULL;
+    int value;
+    cout << "\tIngresa el valor a eliminar: ";
+    cin >> value;
+    
+    while (temp!=NULL)
+    {
+        if (temp->value == value)
+        {
+            if (temp->right == NULL && temp == node)
+            {
+                cout << "Cierto"<<endl;
+                delete(temp);
+                node = NULL;
+            }
+            else{
+                if(temp == node){
+                    node = temp->right;
+                    temp->right = NULL;
+                    delete(temp);
+                }
+                else{
+                    if(temp->right == NULL){
+                        beforeNode->right=NULL;
+                        delete(temp);
+                    }
+                    else{
+                        beforeNode->right = temp->right;
+                        temp->right=NULL;
+                        delete(temp);
+                    }
+                }
+            }
+            return node;
+            /* code */
+        }
+        beforeNode = temp;
+        temp=temp->right;
+    }
+    cout << "\tLo siento no pudimos encontrar el valor"<<endl;
+    sleep(1);
     return node;
 }
