@@ -21,6 +21,9 @@ Node *insertAfterNum(Node *node);
 Node *deleteLastNode(Node *node);
 Node *deleteFirstNode(Node *node);
 Node *findAndDeleteNode(Node *node);
+Node *deleteAfterNode(Node *node);
+Node *deleteBeforeNode(Node *node);
+Node *deleteBetweenNode(Node *node);
 bool searchNode(int value, Node *node);
 int main()
 {
@@ -47,6 +50,7 @@ int main()
         cout << "\t10. Eliminar el ultimo nodo" << endl;
         cout << "\t11. Eliminar el primer nodo" << endl;
         cout << "\t12. Eliminar nodo especifico" << endl;
+        cout << "\t13. Eliminar el siguiente nodo del buscado"<<endl;
         cout << endl
              << "\tSelecciona una opcion: ";
         cin >> answer;
@@ -87,6 +91,9 @@ int main()
             break;
         case 12:
             node = findAndDeleteNode(node);
+            break;
+        case 13:
+            node = deleteAfterNode(node);
             break;
         default:
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
@@ -360,32 +367,36 @@ Node *findAndDeleteNode(Node *node)
     int value;
     cout << "\tIngresa el valor a eliminar: ";
     cin >> value;
-    
-    while (temp!=NULL)
+
+    while (temp != NULL)
     {
         if (temp->value == value)
         {
             if (temp->right == NULL && temp == node)
             {
-                cout << "Cierto"<<endl;
-                delete(temp);
+                delete (temp);
                 node = NULL;
             }
-            else{
-                if(temp == node){
+            else
+            {
+                if (temp == node)
+                {
                     node = temp->right;
                     temp->right = NULL;
-                    delete(temp);
+                    delete (temp);
                 }
-                else{
-                    if(temp->right == NULL){
-                        beforeNode->right=NULL;
-                        delete(temp);
+                else
+                {
+                    if (temp->right == NULL)
+                    {
+                        beforeNode->right = NULL;
+                        delete (temp);
                     }
-                    else{
+                    else
+                    {
                         beforeNode->right = temp->right;
-                        temp->right=NULL;
-                        delete(temp);
+                        temp->right = NULL;
+                        delete (temp);
                     }
                 }
             }
@@ -393,9 +404,54 @@ Node *findAndDeleteNode(Node *node)
             /* code */
         }
         beforeNode = temp;
-        temp=temp->right;
+        temp = temp->right;
     }
-    cout << "\tLo siento no pudimos encontrar el valor"<<endl;
+    cout << "\tLo siento no pudimos encontrar el valor" << endl;
     sleep(1);
+    return node;
+}
+
+Node *deleteAfterNode(Node *node)
+{
+    Node *temp;
+    Node *beforeNode = NULL; 
+    temp = node;
+    int value;
+
+    cout << "Ingresa el numero que esta antes del que deseas eliminar: ";
+    cin >> value;
+
+    while (temp != NULL)
+    {
+        if(temp->right == NULL) {
+            if(temp->value==value){
+                cout << "Lo siento no existe un numero despues de "<<temp->value<<endl;
+            }else{
+                cout << "Lo siento no encontramos el numero"<<endl;
+            }
+        }else{
+            if(temp->value == value){
+                beforeNode = temp;
+                temp = temp->right;
+                beforeNode->right = temp->right;
+                temp->right=NULL;
+                delete(temp);
+                break;
+            }
+        }
+        beforeNode = temp;
+        temp = temp->right;
+    }
+    sleep(1);
+    return node;
+}
+
+Node *deleteBeforeNode(Node *node)
+{
+    return node;
+}
+
+Node *deleteBetweenNode(Node *node)
+{
     return node;
 }
