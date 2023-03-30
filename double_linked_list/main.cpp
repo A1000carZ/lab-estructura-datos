@@ -10,7 +10,7 @@ struct Node
     Node *left;
 };
 
-void printLeftToRightNode(Node *node);
+void printLeftToRightNode(Node *node, Node*lastNode);
 void printRightToLeftNode(Node *node);
 Node* insertRight(Node *node);
 void insertLeft(Node *node);
@@ -25,7 +25,7 @@ int main()
     while (1)
     {
         cout << "\tMenu" << endl;
-        printLeftToRightNode(firstNode);
+        printLeftToRightNode(firstNode,lastNode);
         cout << endl << "\t1. Imprimir nodo actual de izquierda a derecha" << endl;
         cout << "\t2. Imprimir nodo actual de derecha a izquierda" << endl;
         cout << "\t3. Insertar nodo a la derecha" << endl;
@@ -37,7 +37,7 @@ int main()
         switch (answer)
         {
         case 1:
-            printLeftToRightNode(firstNode);
+            printLeftToRightNode(firstNode,lastNode);
             break;
         case 2:
             printRightToLeftNode(lastNode);
@@ -80,7 +80,7 @@ bool searchNode(int value, Node *node)
     return founded;
 }
 
-void printLeftToRightNode(Node *node)
+void printLeftToRightNode(Node *node,Node*lastNode)
 {
     Node *temp;
     temp = node;
@@ -91,6 +91,9 @@ void printLeftToRightNode(Node *node)
         cout << "\tIngresa un valor inicial: ";
         cin >> value;
         node->value = value;
+        node->right= NULL;
+        node->left = NULL;
+        lastNode = node;
         system("clear");
     }
     cout << endl
@@ -129,7 +132,7 @@ void printRightToLeftNode(Node *node)
 
 Node* insertRight(Node *lastNode)
 {
-     int value;
+    int value;
     cout << "\tIngresa el valor del nodo: ";
     cin >> value;
     Node *newNode = new Node;
