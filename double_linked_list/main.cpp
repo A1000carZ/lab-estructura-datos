@@ -10,34 +10,54 @@ struct Node
     Node *left;
 };
 
-void printLeftToRightNode(Node *node, Node*lastNode);
+void printLeftToRightNode(Node *node);
 void printRightToLeftNode(Node *node);
-Node* insertRight(Node *node);
-void insertLeft(Node *node);
+Node *insertRight(Node *node);
+Node *insertLeft(Node *node);
 void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
 
 int main()
 {
-    Node *firstNode = new (Node);
-    Node *lastNode = new(Node);
+    Node *firstNode = NULL;
+    Node *lastNode = NULL;
     int answer;
     while (1)
     {
+        if (firstNode == NULL)
+        {
+            firstNode = new (Node);
+            int value;
+            cout << "\tVamos a inicializar el nodo" << endl;
+            cout << "\tIngresa un valor inicial: ";
+            cin >> firstNode->value;
+            firstNode->right = NULL;
+            firstNode->left = NULL;
+            lastNode = firstNode;
+            system("clear");
+        }
         cout << "\tMenu" << endl;
-        printLeftToRightNode(firstNode,lastNode);
-        cout << endl << "\t1. Imprimir nodo actual de izquierda a derecha" << endl;
+        printLeftToRightNode(firstNode);
+        cout << endl
+             << "\t1. Imprimir nodo actual de izquierda a derecha" << endl;
         cout << "\t2. Imprimir nodo actual de derecha a izquierda" << endl;
         cout << "\t3. Insertar nodo a la derecha" << endl;
         cout << "\t4. Insertar nodo a la izquierda" << endl;
         cout << "\t5. Insertar nodos aleatorios a la derecha" << endl;
         cout << "\t6. Insertar nodos aleatorios a la izquierda" << endl;
-        cout << endl << "\tSelecciona una opcion: ";
+        cout << "\t7. Insertar 101 despues de un numero primo" << endl;
+        cout << "\t8. Insertar N nodos en cada N numeros" << endl;
+        cout << "\t9. Ordenar por shaker sort" << endl;
+        cout << "\t10. Ordenar por seleccion directa" << endl;
+        cout << "\t11. Ordenar por seleccion binaria" << endl;
+        cout << "\t12. Ordenar por insercion directa" << endl;
+        cout << endl
+             << "\tSelecciona una opcion: ";
         cin >> answer;
         switch (answer)
         {
         case 1:
-            printLeftToRightNode(firstNode,lastNode);
+            printLeftToRightNode(firstNode);
             break;
         case 2:
             printRightToLeftNode(lastNode);
@@ -46,7 +66,7 @@ int main()
             lastNode = insertRight(lastNode);
             break;
         case 4:
-            insertLeft(firstNode);
+            firstNode = insertLeft(firstNode);
             break;
         case 5:
             insertRandomRight(firstNode);
@@ -80,22 +100,10 @@ bool searchNode(int value, Node *node)
     return founded;
 }
 
-void printLeftToRightNode(Node *node,Node*lastNode)
+void printLeftToRightNode(Node *node)
 {
     Node *temp;
     temp = node;
-    if (node->value == 0)
-    {
-        int value;
-        cout << "\tVamos a inicializar el nodo" << endl;
-        cout << "\tIngresa un valor inicial: ";
-        cin >> value;
-        node->value = value;
-        node->right= NULL;
-        node->left = NULL;
-        lastNode = node;
-        system("clear");
-    }
     cout << endl
          << "\tEstatus actual" << endl;
     cout << "\t";
@@ -109,10 +117,9 @@ void printLeftToRightNode(Node *node,Node*lastNode)
     cout << endl;
 }
 
-
 void printRightToLeftNode(Node *node)
 {
-   Node *temp;
+    Node *temp;
     temp = node;
     cout << endl
          << "\tEstatus actual" << endl;
@@ -128,14 +135,12 @@ void printRightToLeftNode(Node *node)
     sleep(1);
 }
 
-
-
-Node* insertRight(Node *lastNode)
+Node *insertRight(Node *lastNode)
 {
     int value;
     cout << "\tIngresa el valor del nodo: ";
     cin >> value;
-    Node *newNode = new Node;
+    Node *newNode = new (Node);
     newNode->value = value;
     newNode->left = lastNode;
     lastNode->right = newNode;
@@ -143,23 +148,23 @@ Node* insertRight(Node *lastNode)
     return lastNode;
 }
 
-void insertLeft(Node *firstNode)
+Node *insertLeft(Node *firstNode)
 {
     int value;
+    Node *newNode = new (Node);
     cout << "\tIngresa el valor del nodo: ";
     cin >> value;
-    Node *newNode = new Node;
     newNode->value = value;
     newNode->right = firstNode;
-    firstNode->left = newNode;
+    firstNode->left = NULL;
     firstNode = newNode;
+
+    return firstNode;
 }
-
-
 
 void insertRandomRight(Node *node)
 {
-     int numNodes;
+    int numNodes;
     cout << "\tIngresa la cantidad de nodos a insertar: ";
     cin >> numNodes;
     Node *lastNode = node;
@@ -178,7 +183,7 @@ void insertRandomRight(Node *node)
 
 Node *insertRandomLeft(Node *node)
 {
-   int n;
+    int n;
     cout << "\tIngresa la cantidad de nodos que deseas insertar: ";
     cin >> n;
     for (int i = 0; i < n; i++)
