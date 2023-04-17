@@ -16,6 +16,10 @@ Node *insertRight(Node *node);
 Node *insertLeft(Node *node);
 void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
+void shakerSort(Node *node);
+void selectionSort(Node *node);
+void binarySelectionSort(Node *node);
+void insertionSort(Node *node);
 
 int main()
 {
@@ -73,6 +77,17 @@ int main()
             break;
         case 6:
             firstNode = insertRandomLeft(firstNode);
+            break;
+        case 9:
+            shakerSort(firstNode);
+        case 10:
+            selectionSort(firstNode);
+            break;
+        case 11:
+            binarySelectionSort(firstNode);
+            break;
+        case 12:
+            insertionSort(firstNode);
             break;
         default:
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
@@ -196,4 +211,90 @@ Node *insertRandomLeft(Node *node)
         node = newNode;
     }
     return node;
+}
+
+void shakerSort(Node *node) {
+    bool swapped = true;
+    Node *left = node;
+    Node *right = NULL;
+
+    while (swapped) {
+        swapped = false;
+        while (left != NULL && left->right != right) {
+            if (left->value > left->right->value) {
+                swap(left->value, left->right->value);
+                swapped = true;
+            }
+            left = left->right;
+        }
+        right = left;
+        while (right != NULL && right->left != NULL && right->left != left) {
+            if (right->value < right->left->value) {
+                swap(right->value, right->left->value);
+                swapped = true;
+            }
+            right = right->left;
+        }
+        left = right;
+    }
+    cout << "\tLa lista ha sido ordenada con éxito usando Shaker Sort" << endl;
+}
+
+void selectionSort(Node *node) {
+    Node *i, *j, *minNode;
+    int temp;
+    for (i = node; i != NULL; i = i->right) {
+        minNode = i;
+        for (j = i->right; j != NULL; j = j->right) {
+            if (j->value < minNode->value) {
+                minNode = j;
+            }
+        }
+        if (minNode != i) {
+            temp = minNode->value;
+            minNode->value = i->value;
+            i->value = temp;
+        }
+    }
+}
+
+void binarySelectionSort(Node *node) {
+    Node *i, *j, *minNode, *maxNode, *left, *right;
+    int temp;
+    for (i = node, j = NULL; i != j; i = left, j = maxNode) {
+        for (minNode = maxNode = i; i != j; i = i->right) {
+            if (i->value < minNode->value) {
+                minNode = i;
+            }
+            if (i->value >= maxNode->value) {
+                maxNode = i;
+            }
+        }
+        temp = minNode->value;
+        minNode->value = left->value;
+        left->value = temp;
+
+        if (maxNode == left) {
+            maxNode = minNode;
+        }
+
+        temp = maxNode->value;
+        maxNode->value = right->value;
+        right->value = temp;
+
+        left = left->right;
+        right = right->left;
+    }
+}
+
+void insertionSort(Node *node) {
+    Node *i, *j;
+    int key;
+    for (i = node->right; i != NULL; i = i->right) {
+        key = i->value;
+        for (j = i->left; j != NULL && j->value > key; j = j->left) {
+            j->right->value = j->value;
+        }
+        j->right->value = key;
+    }
 }
