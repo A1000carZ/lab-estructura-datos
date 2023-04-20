@@ -94,7 +94,6 @@ int main()
             cout << "Lo siento, no pudimos procesar su respuesta" << endl;
             break;
         }
-        system("clear");
     }
 
     return 0;
@@ -138,7 +137,7 @@ void printRightToLeftNode(Node *node)
     Node *temp;
     temp = node;
     cout << endl
-         << "\tEstatus actual" << endl;
+        << "\tEstatus actual" << endl;
     cout << "\t";
     while (temp != NULL)
     {
@@ -229,6 +228,7 @@ void shakerSort(Node* node) {
     do {
         swapped = false;
         while (firstNode != nullptr && firstNode->right != nodeRight) {
+            cout << firstNode->value << " > " << firstNode->right->value << " = " << (firstNode->value > firstNode->right->value ? "true" : "false") << endl;
             if (firstNode->value > firstNode->right->value) {
                 swapNode(firstNode, firstNode->right);
                 swapped = true;
@@ -236,17 +236,19 @@ void shakerSort(Node* node) {
             firstNode = firstNode->right;
         }
         nodeRight = firstNode;
-        while (nodeRight != nullptr && nodeRight->left != nullptr && nodeRight->left != firstNode) {
-            if (nodeRight->value < nodeRight->left->value) {
-                swapNode(nodeRight, nodeRight->left);
-                swapped = true;
+        if (nodeRight != nullptr && nodeRight->left != nullptr && nodeRight->left != firstNode) {
+           
+            while (nodeRight != nullptr && nodeRight->left != nullptr && nodeRight->left != firstNode) {
+                cout << nodeRight->value << " < " << nodeRight->left->value << " = " << (nodeRight->value < nodeRight->left->value ? "true" : "false") << endl;
+                if (nodeRight->value < nodeRight->left->value) {
+                    swapNode(nodeRight, nodeRight->left);
+                    swapped = true;
+                }
+                nodeRight = nodeRight->left;
             }
-            nodeRight = nodeRight->left;
         }
         firstNode = nodeRight;
     } while (swapped);
-
-    cout << "\tLa lista ha sido ordenada con éxito usando Shaker Sort" << endl;
 }
 
 void selectionSort(Node *node) {
