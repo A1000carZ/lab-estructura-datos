@@ -17,10 +17,12 @@ Node *insertLeft(Node *node);
 void insertRandomRight(Node *node);
 Node *insertRandomLeft(Node *node);
 void swapNode(Node *nodeLeft,Node*nodeRight);
-void shakerSort(Node *node);
+void ShakerSort(Node *p);
 void selectionSort(Node *node);
 void binarySelectionSort(Node *node);
 void insertionSort(Node *node);
+void bubbleSort(Node *node);
+
 
 int main()
 {
@@ -53,9 +55,10 @@ int main()
         cout << "\t7. Insertar 101 despues de un numero primo" << endl;
         cout << "\t8. Insertar N nodos en cada N numeros" << endl;
         cout << "\t9. Ordenar por shaker sort" << endl;
-        cout << "\t10. Ordenar por seleccion directa" << endl;
-        cout << "\t11. Ordenar por seleccion binaria" << endl;
-        cout << "\t12. Ordenar por insercion directa" << endl;
+        cout << "\t10. Ordenar por bubble sort" << endl;
+        cout << "\t11. Ordenar por seleccion directa" << endl;
+        cout << "\t12. Ordenar por seleccion binaria" << endl;
+        cout << "\t13. Ordenar por insercion directa" << endl;
         cout << endl
              << "\tSelecciona una opcion: ";
         cin >> answer;
@@ -80,14 +83,16 @@ int main()
             firstNode = insertRandomLeft(firstNode);
             break;
         case 9:
-            shakerSort(firstNode);
+            bubbleSort(firstNode);
         case 10:
+            ShakerSort(firstNode);
+        case 11:
             selectionSort(firstNode);
             break;
-        case 11:
+        case 12:
             binarySelectionSort(firstNode);
             break;
-        case 12:
+        case 13:
             insertionSort(firstNode);
             break;
         default:
@@ -180,7 +185,7 @@ Node *insertLeft(Node *firstNode)
 void insertRandomRight(Node *node)
 {
     int numNodes;
-    cout << "\tIngresa la cantidad de nodos a insertar: ";
+    cout << "\tIngresa la cleftidad de nodos a insertar: ";
     cin >> numNodes;
     Node *lastNode = node;
     while (lastNode->right != NULL)
@@ -199,7 +204,7 @@ void insertRandomRight(Node *node)
 Node *insertRandomLeft(Node *node)
 {
     int n;
-    cout << "\tIngresa la cantidad de nodos que deseas insertar: ";
+    cout << "\tIngresa la cleftidad de nodos que deseas insertar: ";
     cin >> n;
     for (int i = 0; i < n; i++)
     {
@@ -219,93 +224,371 @@ void swapNode(Node*nodeLeft,Node*nodeRight){
     nodeLeft->value = temp;
 }
 
-void shakerSort(Node* node) {
-    bool swapped = false;
-    // primer nodo
-    Node* firstNode = node;
-    // nodo siguiente
-    Node* nodeRight = node->right;
-    do {
-        swapped = false;
-        while (firstNode != nullptr && firstNode->right != nodeRight) {
-            cout << firstNode->value << " > " << firstNode->right->value << " = " << (firstNode->value > firstNode->right->value ? "true" : "false") << endl;
-            if (firstNode->value > firstNode->right->value) {
-                swapNode(firstNode, firstNode->right);
-                swapped = true;
-            }
-            firstNode = firstNode->right;
-        }
-        nodeRight = firstNode;
-        if (nodeRight != nullptr && nodeRight->left != nullptr && nodeRight->left != firstNode) {
-           
-            while (nodeRight != nullptr && nodeRight->left != nullptr && nodeRight->left != firstNode) {
-                cout << nodeRight->value << " < " << nodeRight->left->value << " = " << (nodeRight->value < nodeRight->left->value ? "true" : "false") << endl;
-                if (nodeRight->value < nodeRight->left->value) {
-                    swapNode(nodeRight, nodeRight->left);
-                    swapped = true;
-                }
-                nodeRight = nodeRight->left;
-            }
-        }
-        firstNode = nodeRight;
-    } while (swapped);
+void bubbleSort(Node*node){
+    Node *aux, *aux2,*aux3=node;
+	int total=0, i, j, temp;
+	aux = node;
+	cout << "Lista:" << "\n";
+	while (aux != NULL)
+	{
+		cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+	aux = node;
+	char band;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		aux = aux->right;
+	}
+
+	for (i = 1; i < total; i++)
+	{
+		cout << "Paso" << i << "----------------------------------------------------------------" << "\n";
+		aux = node;
+		aux2 = aux->right;
+
+		for (j = 1; j < total; j++)  //total de comparacion
+		{
+			if (aux->value > aux2->value)
+			{
+				temp = aux->value;
+				aux->value = aux2->value;
+				aux2->value = temp;
+				band = 'V';
+			}
+			else
+			{
+				band = 'F';
+			}
+			cout << "\tComparacion\tArreglo\n";
+			cout << "\t-----------\t------------------------\n";
+			cout << "\t[" << aux2->value << ">" << aux->value << "]\t" << band << "\t";
+			while (aux3 != NULL)
+			{
+				cout << aux3->value << " ";
+				aux3 = aux3->right;
+			}
+			cout << "\n";
+			aux = aux2;
+			aux2 = aux2->right;
+			aux3 = node;
+		}
+	}
+}
+
+void ShakerSort(Node* p)
+{
+	Node* aux, *aux2,*aux3,*aux4,*aux5;
+	int i, direc, band, pasos, total=0,inicio,valor,valor2;
+	aux5 = NULL;
+	aux3 = 0;
+	aux = p;
+	aux4 = p;
+	pasos = 1;
+	direc = 1;
+	inicio = 0;
+	cout << "Lista:" << "\n";
+	while (aux != NULL)
+	{
+		cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+
+	aux = p;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		if (aux->right == NULL)
+		{
+			aux5 = aux;
+		}
+		aux = aux->right;
+
+	}
+	do
+	{
+		band = 0;
+		switch (direc)
+		{
+		case 1:
+			cout << "Paso " << pasos << "\n";
+			cout << "Derecha a Izquierda\n";
+			aux2 = aux5;
+			aux = aux5->left;
+			for (i = total - 1; i >= inicio + 1; i--)
+			{
+				if (aux2->value < aux->value)
+				{
+					cout << aux2->value << "<" << aux->value;
+					cout << " V " << band << "\n";
+					valor = aux2->value;
+					aux2->value = aux->value;
+					aux->value = valor;
+					aux = aux->left;
+					aux2 = aux2->left;
+					band++;
+				}
+				else
+				{
+					cout << aux2->value << "<" << aux->value;
+					cout << " F " << band << "\n";
+					aux = aux->left;
+					aux2 = aux2->left;
+				}
+			}
+			direc = 2;
+			inicio++;
+			break;
+		case 2:
+			aux = p;
+			for (i = 0; i <= inicio; i++)
+			{
+				aux = aux->right;
+			}
+			aux2 = aux4;
+			aux = aux4->right;
+			cout << "Izquierda a Derecha\n";
+			for (i = inicio + 1; i <= total; i++)
+			{
+				if (aux2->value > aux->value)
+				{
+					band++;
+					cout << aux2->value << ">" << aux->value;
+					cout << " V " << band << "\n";
+					valor = aux2->value;
+					aux2->value = aux->value;
+					aux->value = valor;
+					aux = aux->right;
+					aux2 = aux2->right;
+				}
+				else
+				{
+					cout << aux2->value << "<" << aux->value;
+					cout << " F " << band << "\n";
+					aux = aux->right;
+					aux2 = aux2->right;
+				}
+			}
+			pasos++;
+			direc = 1;
+			cout << "\n";
+			break;
+		}
+	} while (band != 0);
 }
 
 void selectionSort(Node *node) {
-    Node *i, *j, *minNode;
-    int temp;
-    for (i = node; i != NULL; i = i->right) {
-        minNode = i;
-        for (j = i->right; j != NULL; j = j->right) {
-            if (j->value < minNode->value) {
-                minNode = j;
-            }
-        }
-        if (minNode != i) {
-            temp = minNode->value;
-            minNode->value = i->value;
-            i->value = temp;
-        }
-    }
+    Node* aux = NULL, * aux2 = NULL, * aux3 = NULL, * aux4 = NULL;
+	int valor = 0, valor2 = 0, i = 0, j = 0, k = 0, inicio = 0, total = 0;
+	aux = node;
+	while (aux != NULL)
+	{
+		cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+	aux = node;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		aux = aux->right;
+	}
+	aux = node;
+	aux3 = node;
+	aux2 = node->right;
+	valor = aux->value;
+	while (aux->right != NULL)
+	{
+		for (i = inicio; i <= total-2; i++)
+		{
+			if (aux2->value < aux3->value)
+			{
+				valor2 = aux2->value;
+				aux3 = aux2;
+				aux2 = aux2->right;
+			}
+			else
+			{
+				aux2 = aux2->right;
+			}
+		}
+		cout << "Valor minimo: " << valor << "\n";
+		cout << "valor maximo: " << valor2 << "\n";
+		aux->value = valor2;
+		aux3->value = valor;
+		aux = aux->right;
+		aux2 = aux->right;
+		aux3 = aux;
+		inicio++;
+		valor = aux->value;
+		if (aux->right != NULL)
+		{
+			valor2 = aux2->value;
+		}
+		aux4 = node;
+		while (aux4 != NULL)
+		{
+			cout << aux4->value << " ";
+			aux4 = aux4->right;
+		}
+		cout << "\n";
+	}
 }
 
 void binarySelectionSort(Node *node) {
-    Node *i, *j, *minNode, *maxNode, *left, *right;
-    int temp;
-    for (i = node, j = NULL; i != j; i = left, j = maxNode) {
-        for (minNode = maxNode = i; i != j; i = i->right) {
-            if (i->value < minNode->value) {
-                minNode = i;
-            }
-            if (i->value >= maxNode->value) {
-                maxNode = i;
-            }
-        }
-        temp = minNode->value;
-        minNode->value = left->value;
-        left->value = temp;
+    int i = 0, j = 0, k = 0, l=0, contador=0, valor = 0, valor2 = 0, valor3 = 0, total = 0, inicio = 0;
+	Node* aux = NULL, * aux2 = NULL, * aux3 = NULL, * aux4 = NULL, * aux5 = NULL;
+	char flag = NULL;
+	aux = node;
+	while (aux != NULL)
+	{
+		cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+	aux = node;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		aux = aux->right;
+	}
+	aux = node->right;
+	aux2 = node;
+	aux3 = aux;
+	for (i = inicio; i <= total - 2; i++)
+	{
+		cout << "Pasada " << i + 1 << ":" << "\n";
 
-        if (maxNode == left) {
-            maxNode = minNode;
-        }
-
-        temp = maxNode->value;
-        maxNode->value = right->value;
-        right->value = temp;
-
-        left = left->right;
-        right = right->left;
-    }
+		for (j = k; j >= 0; j--)
+		{
+			cout << aux->value << "<" << aux2->value << " ";
+			if (aux->value < aux2->value)
+			{
+				valor = aux->value;
+				flag = 'V';
+				contador++;
+				if (aux2->left != NULL)
+				{
+					aux2 = aux2->left;
+					cout << "-->" << flag << "\t";
+					aux4 = node;
+					while (aux4 != NULL)
+					{
+						cout << aux4->value << " ";
+						aux4 = aux4->right;
+					}
+					cout << "\n";
+				}
+				else
+				{
+					aux2 = aux->left;
+					cout << "-->" << flag << "\t";
+					aux4 = node;
+					while (aux4 != NULL)
+					{
+						cout << aux4->value << " ";
+						aux4 = aux4->right;
+					}
+					cout << "\n";
+					break;
+				}
+			}
+		}
+		aux3 = aux;
+		for (l = 0; l <= contador-1; l++)
+		{
+			aux->value = aux2->value;
+			if (aux2->left != NULL)
+			{
+				aux2 = aux2->left;
+				aux = aux->left;
+			}
+		}
+		aux2->value = valor;
+		k++;
+		aux = aux3->right;
+		aux2 = aux3;
+	}
 }
 
 void insertionSort(Node *node) {
-    Node *i, *j;
-    int key;
-    for (i = node->right; i != NULL; i = i->right) {
-        key = i->value;
-        for (j = i->left; j != NULL && j->value > key; j = j->left) {
-            j->right->value = j->value;
-        }
-        j->right->value = key;
-    }
+    int i=0, j=0, k=0, valor=0, valor2=0,valor3=0,total=0,inicio=0;
+	Node* aux=NULL,*aux2 = NULL,*aux3 = NULL,*aux4 = NULL,*aux5 = NULL;
+	char flag = NULL;
+	aux = node;
+	while (aux != NULL)
+	{
+		cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+	aux = node;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		aux = aux->right;
+	}
+	aux = node->right;
+	aux2 = node;
+	aux3 = aux;
+	for (i = inicio; i <= total-2; i++)
+	{
+		cout << "Pasada " << i+1 << ":"<<"\n";
+
+		for (j = k; j >= 0; j--)
+		{
+			cout << aux->value << "<" << aux2->value<<" ";
+			if (aux->value < aux2->value)
+			{
+				flag = 'V';
+				valor = aux->value;
+				valor2 = aux2->value;
+				aux2->value = valor;
+				aux->value = valor2;
+				if (aux2->left == NULL)
+				{
+					if (aux3->right != NULL)
+					{
+						aux = aux3->right;
+						aux3 = aux;
+						aux2 = aux->left;
+					}
+				}
+				else
+				{
+					aux = aux->left;
+					aux2 = aux2->left;
+				}
+			}
+			else
+			{
+				flag = 'F';
+				if (aux2->left == NULL)
+				{
+					if (aux3->right != NULL)
+					{
+						aux = aux3->right;
+						aux3 = aux;
+						aux2 = aux->left;
+					}
+				}
+				else
+				{
+					aux2 = aux2->left;
+				}
+			}
+			cout <<"-->"<< flag << "\t";
+			aux4 = node;
+			while (aux4 != NULL)
+			{
+				cout << aux4->value << " ";
+				aux4 = aux4->right;
+			}
+			cout << "\n";
+		}
+		k++;
+	}
 }
