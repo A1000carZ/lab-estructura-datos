@@ -19,7 +19,7 @@ Node *insertRandomLeft(Node *node);
 void swapNode(Node *nodeLeft,Node*nodeRight);
 void ShakerSort(Node *p);
 void selectionSort(Node *node);
-void binarySelectionSort(Node *node);
+void binaryInsertionSort(Node *node);
 void insertionSort(Node *node);
 void bubbleSort(Node *node);
 
@@ -90,7 +90,7 @@ int main()
             selectionSort(firstNode);
             break;
         case 12:
-            binarySelectionSort(firstNode);
+            binaryInsertionSort(firstNode);
             break;
         case 13:
             insertionSort(firstNode);
@@ -163,6 +163,7 @@ Node *insertRight(Node *lastNode)
     Node *newNode = new (Node);
     newNode->value = value;
     newNode->left = lastNode;
+    newNode->right = NULL;
     lastNode->right = newNode;
     lastNode = newNode;
     return lastNode;
@@ -176,6 +177,7 @@ Node *insertLeft(Node *firstNode)
     cin >> value;
     newNode->value = value;
     newNode->right = firstNode;
+    newNode->left = NULL;
     firstNode->left = NULL;
     firstNode = newNode;
 
@@ -195,6 +197,7 @@ void insertRandomRight(Node *node)
         int value = rand() % 100 + 1;
         Node *newNode = new Node;
         newNode->value = value;
+        newNode->right = NULL;
         newNode->left = lastNode;
         lastNode->right = newNode;
         lastNode = newNode;
@@ -437,82 +440,43 @@ void selectionSort(Node *node) {
 		cout << "\n";
 	}
 }
-
-void binarySelectionSort(Node *node) {
-    int i = 0, j = 0, k = 0, l=0, contador=0, valor = 0, valor2 = 0, valor3 = 0, total = 0, inicio = 0;
-	Node* aux = NULL, * aux2 = NULL, * aux3 = NULL, * aux4 = NULL, * aux5 = NULL;
-	char flag = NULL;
-	aux = node;
-	while (aux != NULL)
-	{
-		cout << aux->value << " ";
-		aux = aux->right;
-	}
-	cout << "\n";
-	aux = node;
-	while (aux != NULL)  //total de nodos
-	{
-		total++;
-		aux = aux->right;
-	}
-	aux = node->right;
-	aux2 = node;
-	aux3 = aux;
-	for (i = inicio; i <= total - 2; i++)
-	{
-		cout << "Pasada " << i + 1 << ":" << "\n";
-
-		for (j = k; j >= 0; j--)
-		{
-			cout << aux->value << "<" << aux2->value << " ";
-			if (aux->value < aux2->value)
-			{
-				valor = aux->value;
-				flag = 'V';
-				contador++;
-				if (aux2->left != NULL)
-				{
-					aux2 = aux2->left;
-					cout << "-->" << flag << "\t";
-					aux4 = node;
-					while (aux4 != NULL)
-					{
-						cout << aux4->value << " ";
-						aux4 = aux4->right;
-					}
-					cout << "\n";
-				}
-				else
-				{
-					aux2 = aux->left;
-					cout << "-->" << flag << "\t";
-					aux4 = node;
-					while (aux4 != NULL)
-					{
-						cout << aux4->value << " ";
-						aux4 = aux4->right;
-					}
-					cout << "\n";
-					break;
-				}
-			}
-		}
-		aux3 = aux;
-		for (l = 0; l <= contador-1; l++)
-		{
-			aux->value = aux2->value;
-			if (aux2->left != NULL)
-			{
-				aux2 = aux2->left;
-				aux = aux->left;
-			}
-		}
-		aux2->value = valor;
-		k++;
-		aux = aux3->right;
-		aux2 = aux3;
-	}
+void binaryInsertionSort(Node *node) {
+    Node *current = node->right;
+    while (current != NULL) {
+        Node *temp = current;
+        int value = current->value;
+        Node *left = node;
+        Node *right = current->left;
+        while (left != right) {
+            Node *middle = left;
+            int middleValue = middle->value;
+            middle = middle->right;
+			cout <<endl<< middleValue <<" > "<< value;
+            if (middleValue > value) {
+				cout << " V "<<endl;
+                right = middle->left;
+            } else {
+				cout << " F "<<endl;
+                left = middle;
+            }
+        }
+        current = current->right;
+        if (right != temp->left) {
+            temp->left->right = temp->right;
+            if (temp->right != NULL) {
+                temp->right->left = temp->left;
+            }
+            temp->right = right->right;
+            temp->left = right;
+            right->right->left = temp;
+            right->right = temp;
+        }
+        cout << "\tEstado de mi lista: [";
+        printLeftToRightNode(node);
+        cout << "]" << endl;
+    }
 }
+
 
 void insertionSort(Node *node) {
     int i=0, j=0, k=0, valor=0, valor2=0,valor3=0,total=0,inicio=0;
