@@ -4,8 +4,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <vector>
-#include <random>
+
 #include <algorithm>
+#include <windows.h>
 
 using namespace std;
 
@@ -80,7 +81,7 @@ int main()
             system("clear");
             break;
         case 'r':
-            cout << "Selecciona la playlist: ";
+            cout << "\tSelecciona la playlist: ";
             cin >> selectedIndex;
             playlistScreen(playlists[selectedIndex - 1]);
             break;
@@ -114,14 +115,14 @@ void printBottomBox()
 
 void playerAnimation(Node *song, int remain)
 {
-    cout << "  "
-         << "\e[1m" << song->value.name << "\e[0m" << endl;
+    cout <<"\033[1m\033[32m"<< "  "
+         << "\e[1m" << song->value.name << "\e[0m" <<"\033[0m"<< endl;
     cout << "  " << song->value.author << endl;
     cout << "  ";
     for (int j = 0; j <= 20; j++)
     {
         if (j <= remain * 20 / song->value.duration)
-            cout << "\e[1m" << (char)196 << "\e[0m";
+            cout <<  "\033[1m\033[32m"  << "\e[1m" << (char)196 << "\e[0m"<< "\033[0m";
         else
             cout << " ";
     }
@@ -131,37 +132,34 @@ void playerAnimation(Node *song, int remain)
          << flush;
 }
 
-Node *shufflePlaylist(Node *songs)
-{
+Node* shufflePlaylist(Node* songs) {
     // Create a vector of song nodes
-    std::vector<Node *> songNodes;
-    Node *curr = songs;
-    while (curr != nullptr)
-    {
+    std::vector<Node*> songNodes;
+    Node* curr = songs;
+    while (curr != NULL) {
         songNodes.push_back(curr);
         curr = curr->right;
     }
 
     // Shuffle the vector using a random seed
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(songNodes.begin(), songNodes.end(), g);
+    srand(time(NULL));
+    for (int i = songNodes.size() - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        std::swap(songNodes[i], songNodes[j]);
+    }
 
     // Reorder the linked list based on the shuffled vector
     int n = songNodes.size();
-    for (int i = 0; i < n; i++)
-    {
-        songNodes[i]->left = (i == 0) ? nullptr : songNodes[i - 1];
-        songNodes[i]->right = (i == n - 1) ? nullptr : songNodes[i + 1];
+    for (int i = 0; i < n; i++) {
+        songNodes[i]->left = (i == 0) ? NULL : songNodes[i - 1];
+        songNodes[i]->right = (i == n - 1) ? NULL : songNodes[i + 1];
     }
-    songs = songNodes[0];
-    return songs;
+    return songNodes[0];
 }
-
 void queuePlaylist(Node *songs)
 {
     Node *currentSong = songs;
-    Node *previous = nullptr;
+    Node *previous = NULL;
     Node *upcoming = currentSong->right;
     system("clear");
     bool exit = false;
@@ -181,31 +179,28 @@ void queuePlaylist(Node *songs)
         switch (choice)
         {
         case 'm':
-        system("clear");
-            while (!exitM)
-            {
+        		system("clear");
                 for (int elapsed = 0; elapsed <= currentSong->value.duration; elapsed++)
                 {
                     printTopBox();
                     playerAnimation(currentSong, elapsed);
                     printBottomBox();
-                    sleep(1000);
+                    Sleep(1000);
                     system("cls");
                 }
-            }
             break;
         case 'a':
             shufflePlaylist(songs);
             upcoming = songs;
-            previous = nullptr;
+            previous = NULL;
             system("clear");
             break;
         case 'n':
-            if (upcoming == nullptr)
+            if (upcoming == NULL)
             {
                 shufflePlaylist(songs);
                 upcoming = songs;
-                previous = nullptr;
+                previous = NULL;
             }
             previous = currentSong;
             currentSong = upcoming;
@@ -213,10 +208,10 @@ void queuePlaylist(Node *songs)
             system("clear");
             break;
         case 'b':
-            if (previous == nullptr)
+            if (previous == NULL)
             {
                 shufflePlaylist(songs);
-                previous = nullptr;
+                previous = NULL;
                 upcoming = songs;
                 currentSong = songs;
             }
@@ -352,11 +347,9 @@ void printAllPlaylists(vector<playlist> playlists)
 {
     string header =
         "\n"
-        "******************************************************************\n"
-        "*                                                                *\n"
-        "*                      Playlists Disponibles                     *\n"
-        "*                                                                *\n"
-        "******************************************************************\n";
+        "*                                                            *\n"
+        "*                    Playlists Disponibles                   *\n"
+        "*                                                            *\n";
 
     // Define styles for the playlist names
     string playlistStyle =
@@ -376,13 +369,17 @@ void printAllPlaylists(vector<playlist> playlists)
     std::cout << "             88                                                 d8'              " << std::endl;
     std::cout << "             88                                                d8'               " << std::endl;
     cout << "\033[0m\n";
-    cout << header;
+    
+    printTopBox();
+	cout << header;
+	printBottomBox();
 
     for (int i = 0; i < playlists.size(); i++)
     {
         cout << (char)176 << "  " << i + 1 << ". " << playlists[i].name << endl;
     }
-    cout << "******************************************************************" << endl;
+    cout << endl;
+    printBottomBox();
 }
 
 Node *addSongAtEnd(Node *firstNode)
