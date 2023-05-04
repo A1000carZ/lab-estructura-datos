@@ -45,7 +45,6 @@ Node *deleteSong(Node *node, song song);
 Node *defaultList();
 Node *addSongAtEnd(Node *Node);
 void queuePlaylist(Node *songs);
-Node *favtoritesList(Node *node);
 void sortPlaylistByName(Node *node);
 void sortPlaylistByAuthor(Node *node);
 
@@ -94,42 +93,49 @@ int main()
 
     return 0;
 }
-void printTopBox() {
+void printTopBox()
+{
     cout << (char)218;
-    for(int c = 0; c < 60 ; c++) {
-        cout <<(char)196;
+    for (int c = 0; c < 60; c++)
+    {
+        cout << (char)196;
     }
-    cout << (char)191<<endl;
+    cout << (char)191 << endl;
 }
-void printBottomBox() {
+void printBottomBox()
+{
     cout << (char)192;
-    for(int c = 0; c < 60 ; c++) {
-        cout <<(char)196;
+    for (int c = 0; c < 60; c++)
+    {
+        cout << (char)196;
     }
-    cout << (char)217<<endl;
+    cout << (char)217 << endl;
 }
 
-void playerAnimation(Node* song,int remain) {
-    cout << "  " << "\e[1m"<< song->value.name<<"\e[0m"<< endl;
-    cout << "  " <<  song->value.author << endl;
+void playerAnimation(Node *song, int remain)
+{
+    cout << "  "
+         << "\e[1m" << song->value.name << "\e[0m" << endl;
+    cout << "  " << song->value.author << endl;
     cout << "  ";
-    for (int j = 0; j <= 20; j++) {
+    for (int j = 0; j <= 20; j++)
+    {
         if (j <= remain * 20 / song->value.duration)
-            cout <<"\e[1m"<< (char)196<<"\e[0m";
+            cout << "\e[1m" << (char)196 << "\e[0m";
         else
             cout << " ";
-
     }
     cout << endl;
     cout << "  " << format_time(remain) << "            ";
-    cout << " " << format_time(song->value.duration) << endl <<flush;
+    cout << " " << format_time(song->value.duration) << endl
+         << flush;
 }
 
-Node* shufflePlaylist(Node* songs)
+Node *shufflePlaylist(Node *songs)
 {
     // Create a vector of song nodes
-    std::vector<Node*> songNodes;
-    Node* curr = songs;
+    std::vector<Node *> songNodes;
+    Node *curr = songs;
     while (curr != nullptr)
     {
         songNodes.push_back(curr);
@@ -152,48 +158,85 @@ Node* shufflePlaylist(Node* songs)
     return songs;
 }
 
-void queuePlaylist(Node*songs){
-    Node*currentSong = songs;
-    Node* upcoming = currentSong->right;
+void queuePlaylist(Node *songs)
+{
+    Node *currentSong = songs;
+    Node *previous = nullptr;
+    Node *upcoming = currentSong->right;
     system("clear");
     bool exit = false;
+    bool exitM = false;
     char choice;
     while (!exit)
     {
-    cout << "Reproduciendo"<<endl<<endl;
-    playerAnimation(currentSong,0);
-    cout << endl<<"A continuacion"<<endl;
-    printPlaylist(upcoming);
-    cout << "[m] Mostrar animacion [n] Siguiente [a] Reproduccion aleatoria [s] salir"<<endl;
-    cout << "Selecciona una opcion: ";
-    cin >> choice;
-    switch (choice)
-    {
-    case 'm':
-        /* code */
-        break;
-    case 'a':
-        upcoming = shufflePlaylist(upcoming);
+        cout << "Reproduciendo" << endl
+             << endl;
+        playerAnimation(currentSong, 0);
+        cout << endl
+             << "A continuacion" << endl;
+        printPlaylist(upcoming);
+        cout << "[m] Mostrar animacion [n] Siguiente [b] Anterior [a] Reproduccion aleatoria [s] salir" << endl;
+        cout << "Selecciona una opcion: ";
+        cin >> choice;
+        switch (choice)
+        {
+        case 'm':
         system("clear");
-        break;
-    case 'n':
-        currentSong = upcoming;
-        upcoming = upcoming->right;
-        if(upcoming == NULL){
+            while (!exitM)
+            {
+                for (int elapsed = 0; elapsed <= currentSong->value.duration; elapsed++)
+                {
+                    printTopBox();
+                    playerAnimation(currentSong, elapsed);
+                    printBottomBox();
+                    sleep(1000);
+                    system("cls");
+                }
+            }
+            break;
+        case 'a':
+            shufflePlaylist(songs);
             upcoming = songs;
-        }
-        system("clear");
-        break;
-    case 's':
-        exit = true;
-        break;
-    default:
-         cout << "Lo siento no pudimos procesar su respuesta";
+            previous = nullptr;
             system("clear");
-        break;
+            break;
+        case 'n':
+            if (upcoming == nullptr)
+            {
+                shufflePlaylist(songs);
+                upcoming = songs;
+                previous = nullptr;
+            }
+            previous = currentSong;
+            currentSong = upcoming;
+            upcoming = upcoming->right;
+            system("clear");
+            break;
+        case 'b':
+            if (previous == nullptr)
+            {
+                shufflePlaylist(songs);
+                previous = nullptr;
+                upcoming = songs;
+                currentSong = songs;
+            }
+            else
+            {
+                upcoming = currentSong;
+                currentSong = previous;
+                previous = previous->left;
+            }
+            system("clear");
+            break;
+        case 's':
+            exit = true;
+            break;
+        default:
+            cout << "Lo siento no pudimos procesar su respuesta";
+            system("clear");
+            break;
+        }
     }
-    }
-    
 }
 
 string intToString(int num)
@@ -237,9 +280,9 @@ void playlistScreen(playlist selectedPlaylist)
     {
         system("clear");
         printTopBox();
-        cout <<  "\033[1m\033[32m";
+        cout << "\033[1m\033[32m";
         cout << "                       " << selectedPlaylist.name << "                       ";
-        cout <<  "\033[0m\n";
+        cout << "\033[0m\n";
         printBottomBox();
         printSongs(selectedPlaylist.songs);
         printBottomBox();
