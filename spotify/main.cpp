@@ -30,8 +30,11 @@ struct playlist
     playlist() : name(""), songs(NULL) {}
     playlist(string name, Node *node) : name(name), songs(songs) {}
 };
-
+string intToString(int num);
+string format_time(int seconds);
 playlist createPlaylist();
+void playlistScreen(playlist selectedPlaylist);
+void printSongs(Node *songs);
 void printAllPlaylists(vector<playlist> playlists);
 void printPlaylist(Node *node);
 Node *playPreviousSong(Node *node);
@@ -51,29 +54,35 @@ int main()
     Node *head = NULL;
     Node *favorites = NULL;
     head = defaultList(); // create a default playlist
-    playlist mainPlaylist = playlist("Mi playlist", head);
-    playlist favoritesPlaylist = playlist("Favorite playlist", favorites);
+    playlist mainPlaylist;
+    mainPlaylist.name = "Mi playlist";
+    mainPlaylist.songs = defaultList();
     playlists.push_back(mainPlaylist);
-    playlists.push_back(favoritesPlaylist);
     playlist newPlaylist;
     char choice;
     while (true)
     {
+        int selectedIndex;
         printAllPlaylists(playlists);
         cout << endl;
-        cout << "\t[n] Crear playlist [r] Reproducir playlist"<<endl;
+        cout << "\t[n] Crear playlist [r] Reproducir playlist" << endl;
         cout << "\tSelecciona una opcion: ";
         cin >> choice;
         cout << endl;
+        fflush(stdin);
         switch (choice)
         {
         case 'n':
+            fflush(stdin);
             system("clear");
             newPlaylist = createPlaylist();
             playlists.push_back(newPlaylist);
             system("clear");
             break;
         case 'r':
+            cout << "Selecciona la playlist: ";
+            cin >> selectedIndex;
+            playlistScreen(playlists[selectedIndex - 1]);
             break;
         default:
             cout << "Lo siento no pudimos procesar su respuesta";
@@ -85,26 +94,103 @@ int main()
     return 0;
 }
 
+string intToString(int num)
+{
+    std::stringstream ss;
+    bool isNegative = num < 0;
+    if (isNegative)
+        num *= -1;
+    ss << num;
+    string numAsStr = ss.str();
+
+    return isNegative ? "-" + numAsStr : numAsStr;
+}
+
+string format_time(int seconds)
+{
+    int minutes = seconds / 60;
+    int remaining_seconds = seconds % 60;
+    return intToString(minutes) + ":" + ((remaining_seconds < 10) ? "0" : "") + intToString(remaining_seconds);
+}
+
+void printSongs(Node *songs)
+{
+    Node *temp;
+    temp = songs;
+    int i = 0;
+    while (temp != NULL)
+    {
+        i++;
+        cout << i << ". " << temp->value.name << " - " << temp->value.author << "\t" << format_time(temp->value.duration) << endl;
+        temp = temp->right;
+    }
+    cout << endl;
+}
+
+void playlistScreen(playlist selectedPlaylist)
+{
+    bool exit = false;
+    char choice;
+    while (!exit)
+    {
+        system("clear");
+        cout << "************************************************************" << endl;
+        cout << "                       " << selectedPlaylist.name << "                       " << endl;
+        cout << "************************************************************" << endl;
+        printSongs(selectedPlaylist.songs);
+        cout << "************************************************************" << endl;
+
+        cout << endl
+             << "[r] Reproducir  [n] Agregar cancion [c] Ordenar por titulo [a] Ordenar por Artista  [s] salir" << endl;
+        cout << "Selecciona una opcion: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 's':
+            exit = true;
+            /* code */
+            break;
+        case 'n':
+            selectedPlaylist.songs = addSongAtEnd(selectedPlaylist.songs);
+            break;
+        case 'c':
+            sortPlaylistByName(selectedPlaylist.songs);
+            break;
+        case 'a':
+            sortPlaylistByAuthor(selectedPlaylist.songs);
+            break;
+        default:
+            cout << "Lo siento no pudimos procesar su respuesta";
+            system("clear");
+            break;
+        }
+    }
+}
+
 playlist createPlaylist()
 {
     Node *songs = new (Node);
     playlist newPlaylist;
     newPlaylist.name = "nuevo"; // set the name of the playlist to "nuevo"
     newPlaylist.songs = songs;
-
     cout << "Ingresa el nombre de la playlist: ";
-    cin >> newPlaylist.name;
+    getline(cin, newPlaylist.name);
+    fflush(stdin);
     song s;
     cout << "Agrega al menos una cancion" << endl;
     cout << "Ingresa el nombre de la cancion: ";
-    cin >> s.name;
+    getline(cin, s.name);
     fflush(stdin);
+    cout << endl;
     cout << "Ingresa el autor de la cancion: ";
-    cin >> s.author;
+    getline(cin, s.author);
+    cin.clear();
     fflush(stdin);
     cout << "Ingresa la duracion de la cancion (en segundos): ";
     cin >> s.duration;
-    fflush(stdin);
+    // fflush(stdin);
+    cin.clear();
     cout << endl;
     songs->value = s;
     songs->right = NULL;
@@ -174,12 +260,17 @@ Node *addSongAtEnd(Node *firstNode)
     int value;
     Node *newNode = new (Node);
     song s;
+    fflush(stdin);
     cout << "Ingresa el nombre de la cancion: ";
-    cin >> s.name;
+    getline(cin, s.name);
+    fflush(stdin);
+    cout << endl;
     cout << "Ingresa el autor de la cancion: ";
-    cin >> s.author;
+    getline(cin, s.author);
+    fflush(stdin);
     cout << "Ingresa la duracion de la cancion (en segundos): ";
     cin >> s.duration;
+    fflush(stdin);
     newNode->value = s;
     newNode->right = firstNode;
     newNode->left = NULL;
