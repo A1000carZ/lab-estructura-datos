@@ -59,17 +59,19 @@ int main() {
 
 void printAllPlaylists(vector<playlist>playlists){
      string header = 
-        "********************************************************\n"
-        "*                                                      *\n"
-        "*                Available Playlists                   *\n"
-        "*                                                      *\n"
-        "********************************************************\n";
+        "\n"
+        "******************************************************************\n"
+        "*                                                                *\n"
+        "*                      Playlists Disponibles                     *\n"
+        "*                                                                *\n"
+        "******************************************************************\n";
 
     // Define styles for the playlist names
     string playlistStyle =
         "\033[1m\033[32m" // bold and green text
         "{number}. {name}" // playlist item template
         "\033[0m\n"; // reset style
+cout << "\033[1m\033[32m";
 std::cout << "                                                                                   " << std::endl;
 std::cout << " ad88888ba                                     88     ad88                     " << std::endl;
 std::cout << "d8\"     \"8b                             ,d     \"\"    d8\"                       " << std::endl;
@@ -81,12 +83,13 @@ std::cout << "Y8a     a8P  88b,   ,a8\"  \"8a,   ,a8\"   88,    88    88       `
 std::cout << " \"Y88888P\"   88`YbbdP\"'    `\"YbbdP\"'    \"Y888  88    88         Y88'             " << std::endl;
 std::cout << "             88                                                 d8'              " << std::endl;
 std::cout << "             88                                                d8'               " << std::endl;
-
-    cout << header << endl;
+cout << "\033[0m\n";
+    cout << header;
 
     for(int i = 0; i < playlists.size(); i++){
-        cout<<playlists[i].name<<endl;
+        cout << (char)176 <<"  "<<i+1 << ". " << playlists[i].name << endl;
     }
+    cout << "******************************************************************" << endl;
 }
 
 Node *addSongAtBeginning(Node *lastNode)
