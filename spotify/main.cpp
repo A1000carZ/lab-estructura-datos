@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <vector>
 
 using namespace std;
 
@@ -20,6 +21,14 @@ struct Node{
     Node *left;
 };
 
+struct playlist{
+    string name;
+    Node* songs;
+    playlist(string name,Node* node):name(name),songs(songs){}
+};
+
+
+void printAllPlaylists(vector<playlist> playlists);
 void printPlaylist(Node *node);
 Node* playPreviousSong(Node*node);
 Node* playNextSong(Node*node);
@@ -29,20 +38,55 @@ Node* addSongAtBeginning(Node*Node);
 Node* addSongAtEnd(Node*Node);
 Node* queuePlayList(Node*node);
 Node* favtoritesList(Node*node);
-void sortPlaylist(Node*node);
+void sortPlaylistByName(Node*node);
+void sortPlaylistByAuthor(Node*node);
+
 
 
 
 int main() {
-    song songToDelete("Stand By Me","John Lennon", 210);
-	cout << "Spotify"<<endl;
+    vector<playlist> playlists;
 	Node* head = NULL;
+    Node* favorites = NULL;
     head = defaultList(); // create a default playlist
-	printPlaylist(head);
-    //head=deleteSong(head, songToDelete);
-    sortPlaylist(head);
-    printPlaylist(head);
+    playlist mainPlaylist= playlist("Mi playlist",head);
+    playlist favoritesPlaylist = playlist("Favorite playlist",favorites);
+    playlists.push_back(mainPlaylist);
+    playlists.push_back(favoritesPlaylist);
+    printAllPlaylists(playlists);
 	return 0;
+}
+
+void printAllPlaylists(vector<playlist>playlists){
+     string header = 
+        "********************************************************\n"
+        "*                                                      *\n"
+        "*                Available Playlists                   *\n"
+        "*                                                      *\n"
+        "********************************************************\n";
+
+    // Define styles for the playlist names
+    string playlistStyle =
+        "\033[1m\033[32m" // bold and green text
+        "{number}. {name}" // playlist item template
+        "\033[0m\n"; // reset style
+std::cout << "                                                                                   " << std::endl;
+std::cout << " ad88888ba                                     88     ad88                     " << std::endl;
+std::cout << "d8\"     \"8b                             ,d     \"\"    d8\"                       " << std::endl;
+std::cout << "Y8,                                     88           88                        " << std::endl;
+std::cout << "`Y8aaaaa,    8b,dPPYba,    ,adPPYba,  MM88MMM  88  MM88MMM  8b       d8          " << std::endl;
+std::cout << "  `\"\"\"\"\"8b,  88P'    \"8a  a8\"     \"8a   88     88    88     `8b     d8'         " << std::endl;
+std::cout << "        `8b  88       d8  8b       d8   88     88    88      `8b   d8'           " << std::endl;
+std::cout << "Y8a     a8P  88b,   ,a8\"  \"8a,   ,a8\"   88,    88    88       `8b,d8'            " << std::endl;
+std::cout << " \"Y88888P\"   88`YbbdP\"'    `\"YbbdP\"'    \"Y888  88    88         Y88'             " << std::endl;
+std::cout << "             88                                                 d8'              " << std::endl;
+std::cout << "             88                                                d8'               " << std::endl;
+
+    cout << header << endl;
+
+    for(int i = 0; i < playlists.size(); i++){
+        cout<<playlists[i].name<<endl;
+    }
 }
 
 Node *addSongAtBeginning(Node *lastNode)
@@ -187,9 +231,9 @@ bool compareStringsAlphabetically(const std::string& str1, const std::string& st
     return (str1.length() < str2.length());
 }
 
-void sortPlaylist(Node *node) {
+void sortPlaylistByName(Node *node) {
     Node* aux = NULL, * aux2 = NULL, * aux3 = NULL, * aux4 = NULL;
-	string valor = "", valor2 = ""; 
+	song valor, valor2; 
     int i = 0, j = 0, k = 0, inicio = 0, total = 0;
 	aux = node;
 	while (aux != NULL)
@@ -207,15 +251,14 @@ void sortPlaylist(Node *node) {
 	aux = node;
 	aux3 = node;
 	aux2 = node->right;
-	valor = aux->value.name;
+	valor = aux->value;
 	while (aux->right != NULL)
 	{
 		for (i = inicio; i <= total-2; i++)
 		{
-            
 			if(compareStringsAlphabetically(aux2->value.name, aux3->value.name)) 
 			{
-				valor2 = aux2->value.name;
+				valor2 = aux2->value;
 				aux3 = aux2;
 				aux2 = aux2->right;
 			}
@@ -224,18 +267,77 @@ void sortPlaylist(Node *node) {
 				aux2 = aux2->right;
 			}
 		}
-		cout << "Valor minimo: " << valor << "\n";
-		cout << "valor maximo: " << valor2 << "\n";
-		aux->value.name = valor2;
-		aux3->value.name = valor;
+		cout << "Valor minimo: " << valor.name << "\n";
+		cout << "valor maximo: " << valor2.name << "\n";
+		aux->value = valor2;
+		aux3->value = valor;
 		aux = aux->right;
 		aux2 = aux->right;
 		aux3 = aux;
 		inicio++;
-		valor = aux->value.name;
+		valor = aux->value;
 		if (aux->right != NULL)
 		{
-			valor2 = aux2->value.name;
+			valor2 = aux2->value;
+		}
+		aux4 = node;
+		while (aux4 != NULL)
+		{
+			//cout << aux4->value << " ";
+			aux4 = aux4->right;
+		}
+		cout << "\n";
+	}
+}
+
+void sortPlaylistByAuthor(Node *node) {
+    Node* aux = NULL, * aux2 = NULL, * aux3 = NULL, * aux4 = NULL;
+	song valor, valor2; 
+    int i = 0, j = 0, k = 0, inicio = 0, total = 0;
+	aux = node;
+	while (aux != NULL)
+	{
+		//cout << aux->value << " ";
+		aux = aux->right;
+	}
+	cout << "\n";
+	aux = node;
+	while (aux != NULL)  //total de nodos
+	{
+		total++;
+		aux = aux->right;
+	}
+	aux = node;
+	aux3 = node;
+	aux2 = node->right;
+	valor = aux->value;
+	while (aux->right != NULL)
+	{
+		for (i = inicio; i <= total-2; i++)
+		{
+			if(compareStringsAlphabetically(aux2->value.author, aux3->value.author)) 
+			{
+				valor2 = aux2->value;
+				aux3 = aux2;
+				aux2 = aux2->right;
+			}
+			else
+			{
+				aux2 = aux2->right;
+			}
+		}
+		cout << "Valor minimo: " << valor.name << "\n";
+		cout << "valor maximo: " << valor2.name << "\n";
+		aux->value = valor2;
+		aux3->value = valor;
+		aux = aux->right;
+		aux2 = aux->right;
+		aux3 = aux;
+		inicio++;
+		valor = aux->value;
+		if (aux->right != NULL)
+		{
+			valor2 = aux2->value;
 		}
 		aux4 = node;
 		while (aux4 != NULL)
