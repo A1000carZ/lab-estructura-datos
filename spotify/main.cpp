@@ -185,7 +185,7 @@ void queuePlaylist(Node *songs)
                     printTopBox();
                     playerAnimation(currentSong, elapsed);
                     printBottomBox();
-                    Sleep(1000);
+                    (1000);
                     system("cls");
                 }
             break;

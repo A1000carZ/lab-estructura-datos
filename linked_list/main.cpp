@@ -407,7 +407,7 @@ Node *findAndDeleteNode(Node *node)
         temp = temp->right;
     }
     cout << "\tLo siento no pudimos encontrar el valor" << endl;
-    sleep(1);
+    sleep(3);
     return node;
 }
 
@@ -442,7 +442,7 @@ Node *deleteAfterNode(Node *node)
         beforeNode = temp;
         temp = temp->right;
     }
-    sleep(1);
+    (1);
     return node;
 }
 

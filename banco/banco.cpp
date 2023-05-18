@@ -4,7 +4,10 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
+#include <iomanip>
 #include <ctime>
+#define CURL_STATICLIB
+#include <curl/curl.h>
 using namespace std;
 
 class User
@@ -15,10 +18,12 @@ private:
     string password;
 
 public:
-    string getEmail(){
+    string getEmail()
+    {
         return email;
     }
-    string getUsername(){
+    string getUsername()
+    {
         return username;
     }
     void setEmail(string u)
@@ -55,6 +60,7 @@ public:
         else if (emailField == email && passwordField != password)
         {
             cout << "Contrasenia erronea";
+            sleep(6);
             return false;
         }
         else
@@ -69,25 +75,89 @@ struct transaction
     float amount;
     string description;
     string date;
+    string type;
 };
 
 struct withdrawalWithoutCard
 {
+    User user;
     string id;
     string pin;
+    bool status;
     float amount;
+};
+struct BankWWCard
+{
+    withdrawalWithoutCard value;
+    BankWWCard *next;
+    BankWWCard *prev;
 };
 
 class BankAccount
 {
 private:
     User user;
+    string key;
     float balance;
     vector<transaction> transactions;
-    vector<withdrawalWithoutCard> withdrawals;
+    BankWWCard *withdrawals;
 
 public:
-    void deposit(float amount,string description){
+    void addWWCard(withdrawalWithoutCard wWCard)
+    {
+        BankWWCard *newBWWCard = new BankWWCard;
+
+        if (withdrawals == NULL)
+        {
+            newBWWCard->value = wWCard;
+            newBWWCard->next = NULL;
+            newBWWCard->prev = NULL;
+        }
+        newBWWCard->value = wWCard;
+        newBWWCard->next = withdrawals;
+        newBWWCard->prev = nullptr;
+        if (withdrawals != nullptr)
+        {
+            withdrawals->prev = newBWWCard;
+        }
+        withdrawals = newBWWCard;
+    }
+    void printTransactions()
+    {
+        string answer;
+        system("clear");
+        // Print table header
+        cout << setw(5) << setfill(' ') << "No."
+             << setw(20) << setfill(' ') << "Tipo"
+             << setw(20) << setfill(' ') << "Desripcion"
+             << setw(10) << setfill(' ') << "Monto"
+             << setw(30) << setfill(' ') << "Fecha"
+             << endl;
+        cout << setfill('-') << setw(70) << "" << endl;
+
+        // Print table rows
+        for (int i = 0; i < transactions.size(); i++)
+        {
+            cout << setfill(' ') << setw(5) << i + 1
+                 << setw(20) << transactions[i].type
+                 << setw(20) << transactions[i].description
+                 << setw(10) << "$" << fixed << setprecision(2) << transactions[i].amount
+                 << setw(30) << transactions[i].date
+                 << endl;
+        }
+        cout << "Presione [s] para continuar: ";
+        cin >> answer;
+    }
+    string getKey()
+    {
+        return key;
+    }
+    string getBalance()
+    {
+        return to_string(balance);
+    }
+    void deposit(float amount, string description)
+    {
         auto now = std::chrono::system_clock::now();
         std::time_t current_time = std::chrono::system_clock::to_time_t(now);
         std::tm time_info = *std::localtime(&current_time);
@@ -98,8 +168,10 @@ public:
         newTransaction.amount = amount;
         newTransaction.description = description;
         newTransaction.date = buffer;
+        newTransaction.type = "deposito";
         transactions.push_back(newTransaction);
         cout << "operacion exitosa";
+        sleep(1);
     }
     void transfer(float amount, string description)
     {
@@ -113,14 +185,17 @@ public:
         newTransaction.amount = amount;
         newTransaction.description = description;
         newTransaction.date = buffer;
+        newTransaction.type = "retiro";
         transactions.push_back(newTransaction);
         cout << "operacion exitosa";
     }
-    withdrawalWithoutCard wWithoutCard(float amount)
+    withdrawalWithoutCard wWithoutCard()
     {
         withdrawalWithoutCard newWWCard;
         string id = "";
         string pin = "";
+        string choice;
+        float amount;
         srand(time(nullptr));
         for (int i = 0; i < 10; i++)
         {
@@ -133,17 +208,30 @@ public:
             int digit = rand() % 10;
             pin += to_string(digit);
         }
-
+        system("clear");
+        cout << "Ingrese el monto a retirar: ";
+        cin >> amount;
+        cout << endl;
+        cout << "Retiro generado!" << endl;
         newWWCard.amount = amount;
         newWWCard.id = id;
         newWWCard.pin = pin;
-
-        withdrawals.push_back(newWWCard);
+        newWWCard.user = user;
+        newWWCard.status = false;
+        cout << "Este es el id: " << id << endl;
+        cout << "Este es el pin: " << pin << endl;
+        cout << "Es importante que guarde estos datos" << endl;
+        cout << "Escriba la tecla [ s ] :";
+        cin >> choice;
         return newWWCard;
     }
     User getUser()
     {
         return user;
+    }
+    void setKey(string u)
+    {
+        key = u;
     }
 
     void setUser(User u)
@@ -158,46 +246,86 @@ struct Accounts
     Accounts *next;
     Accounts *prev;
 };
-Accounts* addAccount(Accounts* accounts, BankAccount account);
+
+Accounts *addAccount(Accounts *accounts, BankAccount account);
 User createUser();
-BankAccount searchAccount(string email,Accounts*accounts);
-BankAccount login(Accounts *accounts);
+Accounts *searchAccount(string email, Accounts *accounts);
+Accounts *login(Accounts *accounts);
+Accounts *wWCardFunction(Accounts *accounts, BankWWCard *bankWWCard);
+BankWWCard *addWWCard(BankWWCard *bankWWCard, withdrawalWithoutCard wWCard);
+BankWWCard *searchWWCard(BankWWCard *bankWWCard, string id);
+Accounts *searchAccountByKey(string key, Accounts *accounts);
+void printTransactions(BankAccount bankAccount);
+void deposit(Accounts *currentAccount);
+void transfer(Accounts *currentAccounts, Accounts *currentAccount);
+size_t write_data(char *ptr, size_t size, size_t nmemb, void *userdata);
+void sendMSG(string to, string message);
+bool send_email(const std::string &from_address,
+                const std::string &to_address,
+                const std::string &subject,
+                const std::string &body,
+                const std::string &gmail_username,
+                const std::string &gmail_password);
+void send_whatsapp_message(const std::string &account_sid, const std::string &auth_token,
+                           const std::string &to, const std::string &from, const std::string &message);
 
 int main()
 {
     bool isAuthenticated = false;
     User newUser;
     User user;
-    Accounts* accounts;
-    BankAccount currentAccount;
+    Accounts *accounts;
+    Accounts *currentAccount;
+    BankWWCard *bankWWCards = NULL;
     int choiceAuth;
     int menuChoice;
     while (true)
     {
-        if (isAuthenticated && currentAccount.getUser().isValid())
+        if (isAuthenticated && currentAccount->value.getUser().isValid())
         {
-            cout << "Bienvenido "<<currentAccount.getUser().getUsername()<<" !"<<endl;
-            cout << "1.Cerrar sesion"<<endl;
+            cout << "BanCoin" << endl
+                 << endl;
+            cout << "Bienvenido " << currentAccount->value.getUser().getUsername() << "!" << endl;
+            cout << "Balance actual: $" << currentAccount->value.getBalance() << " MXN" << endl;
+            cout << "Clabe interbancaria: " << currentAccount->value.getKey() << endl;
+            cout << "1. Depositar" << endl;
+            cout << "2. Transferir" << endl;
+            cout << "3. Retiro sin tarjeta" << endl;
+            cout << "4. Transacciones" << endl;
+            cout << "5. Cerrar sesion" << endl;
             cout << "Seleccione una opcion: ";
             cin >> menuChoice;
             switch (menuChoice)
             {
             case 1:
+                deposit(currentAccount);
+                break;
+            case 2:
+                transfer(accounts, currentAccount);
+                break;
+            case 3:
+                bankWWCards = addWWCard(bankWWCards, currentAccount->value.wWithoutCard());
+                break;
+            case 4:
+                currentAccount->value.printTransactions();
+                system("cls");
+                break;
+            case 5:
                 isAuthenticated = false;
                 system("cls");
                 break;
-            
             default:
                 cout << "No pudimos procesar su respuesta";
                 break;
             }
-            system("clear"); 
+            system("clear");
         }
         else
         {
-            cout << " BIENVENIDO AL BANCOIN \n";
+            cout << "Bienvenido a BanCoin \n";
             cout << "1. Iniciar sesion" << endl;
             cout << "2. Crear cuenta" << endl;
+            cout << "3. Retiro sin tarjeta" << endl;
             cout << "Seleccione una opcion: ";
             cin >> choiceAuth;
             cout << endl;
@@ -205,7 +333,8 @@ int main()
             {
             case 1:
                 currentAccount = login(accounts);
-                if(currentAccount.getUser().isValid()){
+                if (currentAccount != NULL)
+                {
                     isAuthenticated = true;
                 }
                 break;
@@ -213,14 +342,45 @@ int main()
                 newUser = createUser();
                 if (newUser.isValid())
                 {
+                    string key = "";
+                    const char charset[] =
+                        "0123456789"
+                        "abcdefghijklmnopqrstuvwxyz"
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    const int max_index = sizeof(charset) - 1;
+                    srand(time(0));
+                    for (int i = 0; i < 10; i++)
+                    {
+                        key += charset[rand() % max_index];
+                    }
                     BankAccount newBankAccount;
                     newBankAccount.setUser(newUser);
-                    currentAccount = newBankAccount;
-                    accounts = addAccount(accounts,newBankAccount);
-                    isAuthenticated = true;
+                    newBankAccount.setKey(key);
+                    // currentAccount = newBankAccount;
+                    accounts = addAccount(accounts, newBankAccount);
+                    currentAccount = searchAccount(newBankAccount.getUser().getEmail(), accounts);
+                    if (currentAccount != NULL)
+                    {
+                        bool success = send_email("a1000carzh@gmail.com", "amilcarzsanchezv@gmail.com", "Test email", "This is a test email.", "a1000carzh@gmail.com", "iychaddzqjpofraq");
+
+                        if (success)
+                        {
+                            std::cout << "Email sent successfully." << std::endl;
+                        }
+                        else
+                        {
+                            std::cerr << "Error sending email." << std::endl;
+                        }
+                        isAuthenticated = true;
+                        sleep(2);
+                    }
                 }
                 break;
+            case 3:
+                accounts = wWCardFunction(accounts, bankWWCards);
+                break;
             default:
+                cout << "No pudimos procesar su respuesta";
                 break;
             }
             system("clear");
@@ -230,12 +390,258 @@ int main()
     return 0;
 }
 
-Accounts* addAccount(Accounts* accounts, BankAccount account) {
-    Accounts* newAccount = new Accounts;
+size_t write_data(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+    std::string *response = (std::string *)userdata;
+    response->append(ptr, size * nmemb);
+    return size * nmemb;
+}
+
+// Function to send an email using curl
+bool send_email(const std::string &from_address,
+                const std::string &to_address,
+                const std::string &subject,
+                const std::string &body,
+                const std::string &gmail_username,
+                const std::string &gmail_password)
+{
+    CURL *curl;
+    CURLcode res = CURLE_OK;
+
+    // Set up the curl object
+    curl = curl_easy_init();
+    if (curl)
+    {
+        // Set the URL for the Gmail SMTP server
+        curl_easy_setopt(curl, CURLOPT_URL, "smtps://smtp.gmail.com:587");
+
+        // Set the email credentials
+        curl_easy_setopt(curl, CURLOPT_USERNAME, gmail_username.c_str());
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, gmail_password.c_str());
+
+        // Set the email headers
+        struct curl_slist *recipients = NULL;
+        std::string to_header = "To: " + to_address;
+        recipients = curl_slist_append(recipients, to_header.c_str());
+        std::string from_header = "From: " + from_address;
+        recipients = curl_slist_append(recipients, from_header.c_str());
+        std::string subject_header = "Subject: " + subject;
+        recipients = curl_slist_append(recipients, subject_header.c_str());
+        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+
+        // Set the email body
+        std::vector<char> buffer;
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, NULL);
+        curl_easy_setopt(curl, CURLOPT_READDATA, NULL);
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, NULL);
+        curl_easy_setopt(curl, CURLOPT_READDATA, NULL);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, body.size());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+
+        // Send the email
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            cout << "response: "<<res<<endl;
+            curl_slist_free_all(recipients);
+            curl_easy_cleanup(curl);
+            return false;
+        }
+
+        // Clean up
+        curl_slist_free_all(recipients);
+        curl_easy_cleanup(curl);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void send_whatsapp_message(const std::string &account_sid, const std::string &auth_token,
+                           const std::string &to, const std::string &from, const std::string &message)
+{
+    CURL *curl;
+    CURLcode res = CURLE_OK;
+
+    curl = curl_easy_init();
+    if (curl)
+    {
+        std::string url = "https://api.twilio.com/2010-04-01/Accounts/" + account_sid + "/Messages.json";
+        std::string credentials = account_sid + ":" + auth_token;
+
+        // Set up the curl object
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_USERPWD, credentials.c_str());
+
+        // Set the request headers
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        // Set the request body
+        std::string post_fields = "To=" + to + "&From=" + from + "&Body=" + message;
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_fields.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, post_fields.length());
+
+        // Set the response handler
+        std::string response;
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+        // Send the request
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            std::cerr << "Error sending WhatsApp message: " << curl_easy_strerror(res) << std::endl;
+        }
+        else
+        {
+            std::cout << "WhatsApp message sent. Response: " << response << std::endl;
+        }
+
+        // Clean up
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+    }
+    else
+    {
+        std::cerr << "Error initializing curl." << std::endl;
+    }
+}
+
+void sendMSG(string to, string message)
+{
+    string toMsg = "whatsapp:+521" + to;
+    cout << toMsg << endl;
+    send_whatsapp_message("AC8602d3fbaf1a819a4db1c9b2b84262d7", "cd9c6c94633effee4f6d76cddfcc6c0c", toMsg, "whatsapp:+14155238886", message);
+    sleep(2);
+}
+
+void transfer(Accounts *currentAccounts, Accounts *currentAccount)
+{
+    float amount;
+    string key;
+    string description;
+    Accounts *account = new (Accounts);
+    cout << "Ingresa la clabe interbancaria: ";
+    cin >> key;
+    cout << "Ingresa el monto a depositar: ";
+    cin >> amount;
+    fflush(stdin);
+    cout << "Ingresa el concepto: ";
+    getline(cin, description);
+
+    account = searchAccountByKey(key, currentAccounts);
+    if (account != NULL)
+    {
+        currentAccount->value.transfer(amount, description);
+        account->value.deposit(amount, description);
+        cout << "operacion exitosa";
+    }
+    else
+    {
+        cout << "Lo siento no pudimos encontrar la cuenta";
+    }
+
+    sleep(1);
+}
+
+void deposit(Accounts *currentAccount)
+{
+    float amount;
+    string description;
+    cout << "Ingresa el monto a depositar: ";
+    cin >> amount;
+    fflush(stdin);
+    cout << "Ingresa el concepto: ";
+    getline(cin, description);
+    currentAccount->value.deposit(amount, description);
+    cout << "operacion exitosa";
+    sleep(1);
+}
+
+BankWWCard *addWWCard(BankWWCard *bankWWCard, withdrawalWithoutCard wWCard)
+{
+    BankWWCard *newBWWCard = new BankWWCard;
+    if (bankWWCard == NULL)
+    {
+        newBWWCard->value = wWCard;
+        newBWWCard->next = NULL;
+        newBWWCard->prev = NULL;
+        return newBWWCard;
+    }
+    newBWWCard->value = wWCard;
+    newBWWCard->next = bankWWCard;
+    newBWWCard->prev = nullptr;
+    if (bankWWCard != nullptr)
+    {
+        bankWWCard->prev = newBWWCard;
+    }
+    bankWWCard = newBWWCard;
+
+    return bankWWCard;
+}
+BankWWCard *searchWWCard(BankWWCard *bankWWCard, string id)
+{
+    BankWWCard *curr = bankWWCard;
+    BankAccount account;
+    while (curr != nullptr)
+    {
+        if (curr->value.id == id)
+        {
+            return curr;
+        }
+        curr = curr->next;
+    }
+    return NULL;
+}
+
+Accounts *wWCardFunction(Accounts *accounts, BankWWCard *bankWWCard)
+{
+
+    BankWWCard *item;
+    Accounts *currentAccount;
+    string id, pin;
+    system("clear");
+    cout << "Ingrese el id: ";
+    cin >> id;
+    cout << "Ingrese el pin: ";
+    cin >> pin;
+
+    item = searchWWCard(bankWWCard, id);
+
+    if (item != NULL)
+    {
+        cout << "id: " << item->value.id << endl;
+        cout << "Monto a cobrar: $" << item->value.amount << endl;
+        cout << "Por favor revise su efectivo" << endl;
+        currentAccount = searchAccount(item->value.user.getEmail(), accounts);
+        currentAccount->value.transfer(item->value.amount, "Retiro sin tarjeta");
+        sleep(5);
+        return accounts;
+    }
+    else
+    {
+        cout << "Verifique sus datos" << endl;
+        sleep(10);
+        return accounts;
+    }
+}
+
+Accounts *addAccount(Accounts *accounts, BankAccount account)
+{
+    Accounts *newAccount = new Accounts;
     newAccount->value = account;
     newAccount->next = accounts;
     newAccount->prev = nullptr;
-    if (accounts != nullptr) {
+    if (accounts != nullptr)
+    {
         accounts->prev = newAccount;
     }
     accounts = newAccount;
@@ -248,48 +654,64 @@ User createUser()
     User newUser;
     string username;
     string email;
+
     fflush(stdin);
     cout << "Crear cuenta" << endl;
     cout << "Ingrese su nombre: ";
-    getline(cin,username);
+    getline(cin, username);
     cout << "Ingrese su email: ";
     cin >> email;
     newUser.setEmail(email);
     newUser.setUsername(username);
     newUser.setPassword();
+
     return newUser;
 }
-BankAccount searchAccount(string email, Accounts *accounts)
+Accounts *searchAccountByKey(string key, Accounts *accounts)
+{
+    Accounts *curr = accounts;
+    BankAccount account;
+    while (curr != nullptr)
     {
-        Accounts *curr = accounts;
-        BankAccount account;
-        while (curr != nullptr)
+        if (curr->value.getKey() == key)
         {
-            if (curr->value.getUser().getEmail() == email)
-            {
-                return curr->value;
-            }
-            curr = curr->next;
+            return curr;
         }
-        BankAccount errorAccount;
-        return errorAccount;
+        curr = curr->next;
+    }
+    return NULL;
+}
+
+Accounts *searchAccount(string email, Accounts *accounts)
+{
+    Accounts *curr = accounts;
+    BankAccount account;
+    while (curr != nullptr)
+    {
+        if (curr->value.getUser().getEmail() == email)
+        {
+            return curr;
+        }
+        curr = curr->next;
+    }
+    return NULL;
 }
 User searchUser(string email, Accounts *accounts)
+{
+    Accounts *curr = accounts;
+    while (curr != nullptr)
     {
-        Accounts *curr = accounts;
-        while (curr != nullptr)
+        if (curr->value.getUser().getEmail() == email)
         {
-            if (curr->value.getUser().getEmail() == email)
-            {
-                return curr->value.getUser();
-            }
-            curr = curr->next;
+            return curr->value.getUser();
         }
-        User dummyUser;
-        return dummyUser;
+        curr = curr->next;
     }
+    User dummyUser;
+    return dummyUser;
+}
 
-BankAccount login(Accounts *accounts)
+Accounts *login(Accounts *accounts)
 {
     BankAccount account;
     string emailField;
@@ -297,19 +719,17 @@ BankAccount login(Accounts *accounts)
     cout << "Ingrese su email: ";
     cin >> emailField;
     cout << endl;
-    cout << "Ingrese su contrasenia: ";
-    cin >> passwordField;
+    passwordField = getpass("Ingrese su contraseña: ");
     cout << endl;
 
-    User user = searchUser(emailField,accounts);
+    User user = searchUser(emailField, accounts);
 
     if (user.signIn(emailField, passwordField))
     {
-        return searchAccount(emailField,accounts);
+        return searchAccount(emailField, accounts);
     }
     else
     {
-        BankAccount errorAccount;
-        return errorAccount;
+        return NULL;
     }
 }
