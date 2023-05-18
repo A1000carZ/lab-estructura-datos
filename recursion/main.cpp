@@ -29,6 +29,43 @@ public:
         }
     }
 
+    void insertRandom(int n) {
+        srand(time(nullptr)); 
+        insertRandomRecursive(n);
+    }
+
+   
+    void insertRandomRecursive(int n) {
+        if (n <= 0) {
+            return;
+        }
+
+        int data = rand() % 100; 
+        head = insertRecursive(head, data);
+
+        insertRandomRecursive(n - 1);
+    }
+
+    
+    Node* insertRecursive(Node* node, int data) {
+        if (node == nullptr) {
+            Node* newNode = new Node();
+            newNode->data = data;
+            newNode->next = nullptr;
+            return newNode;
+        }
+
+        if (rand() % 2 == 0) {  
+            Node* newNode = new Node();
+            newNode->data = data;
+            newNode->next = node;
+            return newNode;
+        }
+
+        node->next = insertRecursive(node->next, data);
+        return node;
+    }
+
     void printRightToLeft() {
         printRightToLeftRecursive(head);
     }
@@ -56,11 +93,7 @@ public:
 
 int main() {
     LinkedList myList;
-    myList.insert(1);
-    myList.insert(2);
-    myList.insert(3);
-    myList.insert(4);
-    myList.insert(5);
+    myList.insertRandom(5);
 
     cout << "Lista (derecha a izquierda): ";
     myList.printRightToLeft();
