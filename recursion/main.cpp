@@ -1,5 +1,6 @@
 #include<iostream>
 using namespace std;
+
 struct Node {
     int data;
     Node* next;
@@ -10,6 +11,7 @@ private:
     Node* head;
 
 public:
+
     LinkedList() {
         head = nullptr;
     }
@@ -34,7 +36,6 @@ public:
         insertRandomRecursive(n);
     }
 
-   
     void insertRandomRecursive(int n) {
         if (n <= 0) {
             return;
@@ -81,7 +82,6 @@ public:
     void printLeftToRight() {
         printLeftToRightRecursive(head);
     }
-
     void printLeftToRightRecursive(Node* node) {
         if (node == nullptr) {
             return;
@@ -94,14 +94,11 @@ public:
 int main() {
     LinkedList myList;
     myList.insertRandom(5);
-
     cout << "Lista (derecha a izquierda): ";
     myList.printRightToLeft();
     cout << endl;
-
     cout << "Lista (izquierda a derecha): ";
     myList.printLeftToRight();
     cout << endl;
-
     return 0;
 }
