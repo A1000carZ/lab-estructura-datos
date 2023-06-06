@@ -266,8 +266,6 @@ bool send_email(const std::string &from_address,
                 const std::string &body,
                 const std::string &gmail_username,
                 const std::string &gmail_password);
-void send_whatsapp_message(const std::string &account_sid, const std::string &auth_token,
-                           const std::string &to, const std::string &from, const std::string &message);
 
 int main()
 {
@@ -462,64 +460,11 @@ bool send_email(const std::string &from_address,
         return false;
     }
 }
-
-void send_whatsapp_message(const std::string &account_sid, const std::string &auth_token,
-                           const std::string &to, const std::string &from, const std::string &message)
-{
-    CURL *curl;
-    CURLcode res = CURLE_OK;
-
-    curl = curl_easy_init();
-    if (curl)
-    {
-        std::string url = "https://api.twilio.com/2010-04-01/Accounts/" + account_sid + "/Messages.json";
-        std::string credentials = account_sid + ":" + auth_token;
-
-        // Set up the curl object
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_USERPWD, credentials.c_str());
-
-        // Set the request headers
-        struct curl_slist *headers = NULL;
-        headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        // Set the request body
-        std::string post_fields = "To=" + to + "&From=" + from + "&Body=" + message;
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_fields.c_str());
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, post_fields.length());
-
-        // Set the response handler
-        std::string response;
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
-        // Send the request
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK)
-        {
-            std::cerr << "Error sending WhatsApp message: " << curl_easy_strerror(res) << std::endl;
-        }
-        else
-        {
-            std::cout << "WhatsApp message sent. Response: " << response << std::endl;
-        }
-
-        // Clean up
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
-    }
-    else
-    {
-        std::cerr << "Error initializing curl." << std::endl;
-    }
-}
-
 void sendMSG(string to, string message)
 {
     string toMsg = "whatsapp:+521" + to;
     cout << toMsg << endl;
-    send_whatsapp_message("AC8602d3fbaf1a819a4db1c9b2b84262d7", "cd9c6c94633effee4f6d76cddfcc6c0c", toMsg, "whatsapp:+14155238886", message);
+    //send_whatsapp_message("AC8602d3fbaf1a819a4db1c9b2b84262d7", "cd9c6c94633effee4f6d76cddfcc6c0c", toMsg, "whatsapp:+14155238886", message);
     sleep(2);
 }
 

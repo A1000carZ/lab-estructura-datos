@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <algorithm>
-#include <windows.h>
+
 
 using namespace std;
 
