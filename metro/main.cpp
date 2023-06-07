@@ -57,10 +57,10 @@ vector<string> dijkstra_shortest_path(vector<Node *> graph, string start, string
 
         for (Node *neighbor : current_node->neighbors)
         {
-            int weight = 1; // Assuming equal weight for all connections
+            int weight = 1;
             if (half_travel && neighbor->line != current_node->line)
             {
-                weight = 3; // Assign higher weight for line changes during half travel
+                weight = 3;
             }
             int distance = current_distance + weight;
             if (distance < distances[neighbor->name])
@@ -82,13 +82,13 @@ vector<string> dijkstra_shortest_path(vector<Node *> graph, string start, string
 
     return path;
 }
-vector<string> get_route_instructions(const vector<string> &route)
+vector<string> get_route_instructions(const vector<string>& route, const vector<Node*>& graph)
 {
     vector<string> instructions;
 
     if (route.size() <= 1)
     {
-        instructions.push_back("Ruta invalida");
+        instructions.push_back("Ruta inválida");
         return instructions;
     }
 
@@ -97,10 +97,36 @@ vector<string> get_route_instructions(const vector<string> &route)
         string current_station = route[i];
         string next_station = route[i + 1];
 
-        instructions.push_back("Toma " + current_station + " despues " + next_station + ".");
+        Node* current_node = NULL;
+        Node* next_node = NULL;
+
+        // Buscar los nodos correspondientes a las estaciones actual y siguiente en el grafo
+        for (Node* node : graph)
+        {
+            if (node->name == current_station)
+                current_node = node;
+            if (node->name == next_station)
+                next_node = node;
+        }
+
+        if (current_node && next_node)
+        {
+            if (current_node->line != next_node->line)
+            {
+                instructions.push_back("Transborda en " + current_station + " para llegar a " + next_station + ".");
+            }
+            else
+            {
+                instructions.push_back("Toma " + current_station + " y luego sigue hacia " + next_station + ".");
+            }
+        }
+        else
+        {
+            instructions.push_back("No se encontró información completa de las estaciones.");
+        }
     }
 
-    instructions.push_back("Habras llegado a tu destino");
+    instructions.push_back("Has llegado a tu destino.");
 
     return instructions;
 }
@@ -108,7 +134,6 @@ vector<string> get_route_instructions(const vector<string> &route)
 int main()
 {
     vector<Node *> graph;
-    // Create the nodes for the subway stations
     // Línea 1
     Node *observatorio = new Node("Observatorio", "Línea 1");
     Node *tacubayaLinea1 = new Node("Tacubaya Linea 1", "Línea 1");
@@ -117,12 +142,12 @@ int main()
     Node *sevilla = new Node("Sevilla", "Línea 1");
     Node *insurgentes = new Node("Insurgentes", "Línea 1");
     Node *cuauhtemoc = new Node("Cuauhtemoc", "Línea 1");
-    Node *balderas = new Node("Balderas", "Línea 1");
+    Node *balderas = new Node("Balderas Linea 1", "Línea 1");
     Node *saltoDelAgua = new Node("Salto del Agua Linea 1", "Línea 1");
     Node *isabelLaCatolica = new Node("Isabel la Catolica", "Línea 1");
-    Node *pinoSuarez = new Node("Pino Suarez", "Línea 1");
+    Node *pinoSuarez = new Node("Pino Suarez Linea 1", "Línea 1");
     Node *merced = new Node("Merced", "Línea 1");
-    Node *candelaria = new Node("Candelaria", "Línea 1");
+    Node *candelaria = new Node("Candelaria Linea 1", "Línea 1");
     Node *sanLazaro = new Node("San Lazaro", "Línea 1");
     Node *moctezuma = new Node("Moctezuma", "Línea 1");
     Node *balbuena = new Node("Balbuena", "Línea 1");
@@ -137,18 +162,18 @@ int main()
     Node *nodeOceaniaLinea5 = new Node("Oceania Linea 5", "Linea 5");
     Node *nodeAragon = new Node("Aragon", "Linea 5");
     Node *nodeEduardoMolina = new Node("Eduardo Molina", "Linea 5");
-    Node *nodeConsuladoLinea5 = new Node("Consulado", "Linea 5");
+    Node *nodeConsuladoLinea5 = new Node("Consulado Linea 5", "Linea 5");
     Node *nodeValleGomez = new Node("Valle Gomez", "Linea 5");
     Node *nodeMisterios = new Node("Misterios", "Linea 5");
-    Node *nodeLaRazaLinea5 = new Node("La Raza", "Linea 5");
+    Node *nodeLaRazaLinea5 = new Node("La Raza Linea 5", "Linea 5");
     Node *nodeAutobusesdelNorte = new Node("Autobuses del Norte", "Linea 5");
     Node *nodeInstitutodelPetroleoLinea5 = new Node("Instituto del Petroleo Linea 5", "Linea 5");
     Node *nodePolitecnico = new Node("Politecnico", "Linea 5");
     // Línea 9
-    Node *nodeTacubayaLinea9 = new Node("Tacubaya", "Linea 9");
+    Node *nodeTacubayaLinea9 = new Node("Tacubaya Linea 9", "Linea 9");
     Node *nodePatriotismo = new Node("Patriotismo", "Linea 9");
     Node *nodeChilpancingo = new Node("Chilpancingo", "Linea 9");
-    Node *nodeCentroMedicoLinea9 = new Node("Centro Medico", "Linea 9");
+    Node *nodeCentroMedicoLinea9 = new Node("Centro Medico Linea 9", "Linea 9");
     Node *nodeLazaroCardenas = new Node("Lazaro Cardenas", "Linea 9");
     Node *nodeChabacanoLinea9 = new Node("Chabacano Linea 9", "Linea 9");
     Node *nodeJamaicaLinea9 = new Node("Jamaica", "Linea 9");
@@ -166,13 +191,13 @@ int main()
     Node *nodeObrera = new Node("Obrera", "Linea 8");
     Node *nodeChabacanoLinea8 = new Node("Chabacano Linea 8", "Linea 8");
     Node *nodeLaViga = new Node("La Viga", "Linea 8");
-    Node *nodeSantaAnitaLinea8 = new Node("Santa Anita", "Linea 8");
+    Node *nodeSantaAnitaLinea8 = new Node("Santa Anita Linea 8", "Linea 8");
     Node *nodeCoyuya = new Node("Coyuya", "Linea 8");
     Node *nodeIztacalco = new Node("Iztacalco", "Linea 8");
     Node *nodeApatlaco = new Node("Apatlaco", "Linea 8");
     Node *nodeAculco = new Node("Aculco", "Linea 8");
     Node *nodeEscuadron201 = new Node("Escuadron 201", "Linea 8");
-    Node *nodeAtlalilcoLinea8 = new Node("Atlalilco", "Linea 8");
+    Node *nodeAtlalilcoLinea8 = new Node("Atlalilco Linea 8", "Linea 8");
     Node *nodeIztapalapa = new Node("Iztapalapa", "Linea 8");
     Node *nodeCerrodelaEstrella = new Node("Cerro de la Estrella", "Linea 8");
     Node *nodeUAMIztapalapa = new Node("UAM Iztapalapa", "Linea 8");
@@ -201,20 +226,20 @@ int main()
     // Línea 2
     Node *nodeCuatroCaminos = new Node("Cuatro Caminos", "Linea 2");
     Node *nodePanteones = new Node("Panteones", "Linea 2");
-    Node *nodeTacubaLinea2 = new Node("Tacuba", "Linea 2");
+    Node *nodeTacubaLinea2 = new Node("Tacuba Linea 2", "Linea 2");
     Node *nodeCuitlahuac = new Node("Cuitlahuac", "Linea 2");
     Node *nodePopotla = new Node("Popotla", "Linea 2");
     Node *nodeColegioMilitar = new Node("Colegio Militar", "Linea 2");
     Node *nodeNormal = new Node("Normal", "Linea 2");
     Node *nodeSanCosme = new Node("San Cosme", "Linea 2");
     Node *nodeRevolucion = new Node("Revolucion", "Linea 2");
-    Node *nodeHidalgoLinea2 = new Node("Hidalgo", "Linea 2");
-    Node *nodeBellasArtesLinea2 = new Node("Bellas Artes", "Linea 2");
+    Node *nodeHidalgoLinea2 = new Node("Hidalgo Linea 2", "Linea 2");
+    Node *nodeBellasArtesLinea2 = new Node("Bellas Artes Linea 2", "Linea 2");
     Node *nodeAllende = new Node("Allende", "Linea 2");
     Node *nodeZocalo = new Node("Zocalo", "Linea 2");
-    Node *nodePinoSuarezLinea2 = new Node("Pino Suarez", "Linea 2");
+    Node *nodePinoSuarezLinea2 = new Node("Pino Suarez Linea 2", "Linea 2");
     Node *nodeSanAntonioAbad = new Node("San Antonio Abad", "Linea 2");
-    Node *nodeChabacanoLinea2 = new Node("Chabacano", "Linea 2");
+    Node *nodeChabacanoLinea2 = new Node("Chabacano Linea 2", "Linea 2");
     Node *nodeViaducto = new Node("Viaducto", "Linea 2");
     Node *nodeXola = new Node("Xola", "Linea 2");
     Node *nodeVillaDeCortes = new Node("Villa de Cortes", "Linea 2");
@@ -838,11 +863,17 @@ int main()
 
     string start_station = "Coyuya";
     string end_station = "Mixiuhca";
+    cout << "Ingresa la estacion de partida: ";
+    getline(cin,start_station);
+    cout <<endl;
+    cout << "Ingresa la estacion de destino: ";
+    getline(cin,end_station);
+    cout << endl;
 
     vector<string> shortest_path = dijkstra_shortest_path(graph, start_station, end_station, false);
-    vector<string> route_instructions = get_route_instructions(shortest_path);
+    vector<string> route_instructions = get_route_instructions(shortest_path,graph);
 
-    cout << "Shortest path from " << start_station << " to " << end_station << ":" << endl;
+    cout << "El camino mas corto desde " << start_station << " hasta " << end_station << " es:" << endl;
     for (const string &instruction : route_instructions)
     {
         cout << instruction << endl;
