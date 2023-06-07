@@ -295,10 +295,10 @@ int main()
     Node *nodeInstitutoDelPetroleoLinea6 = new Node("Instituto del Petroleo Linea 6", "Linea 6");
     Node *nodeLindavista = new Node("Lindavista", "Linea 6");
     Node *nodeDeportivo18DeMarzoLinea6 = new Node("Deportivo 18 de Marzo Linea 6", "Linea 6");
-    Node *nodeLaVillaBasílica = new Node("La Villa Basilica", "Linea 6");
+    Node *nodeLaVillaBasilica = new Node("La Villa Basilica", "Linea 6");
     Node *nodeMartinCarreraLinea6 = new Node("Martin Carrera Linea 6", "Linea 6");
     // Línea 4
-    Node *nodeMartínCarreraLinea4 = new Node("Martin Carrera Linea 4", "Linea 4");
+    Node *nodeMartinCarreraLinea4 = new Node("Martin Carrera Linea 4", "Linea 4");
     Node *nodeTalisman = new Node("Talisman", "Linea 4");
     Node *nodeBondojito = new Node("Bondojito", "Linea 4");
     Node *nodeConsuladoLinea4 = new Node("Consulado Linea 4", "Linea 4");
@@ -638,11 +638,11 @@ int main()
     nodeMixcoacLinea7->neighbors.push_back(nodeMixcoacLinea12);
     nodeBarrancadelMuerto->neighbors.push_back(nodeMixcoacLinea7);
     // linea 6
-    nodeMartinCarreraLinea6->neighbors.push_back(nodeLaVillaBasílica);
-    nodeMartinCarreraLinea6->neighbors.push_back(nodeMartínCarreraLinea4);
-    nodeLaVillaBasílica->neighbors.push_back(nodeMartinCarreraLinea6);
-    nodeLaVillaBasílica->neighbors.push_back(nodeDeportivo18DeMarzoLinea6);
-    nodeDeportivo18DeMarzoLinea6->neighbors.push_back(nodeLaVillaBasílica);
+    nodeMartinCarreraLinea6->neighbors.push_back(nodeLaVillaBasilica);
+    nodeMartinCarreraLinea6->neighbors.push_back(nodeMartinCarreraLinea4);
+    nodeLaVillaBasilica->neighbors.push_back(nodeMartinCarreraLinea6);
+    nodeLaVillaBasilica->neighbors.push_back(nodeDeportivo18DeMarzoLinea6);
+    nodeDeportivo18DeMarzoLinea6->neighbors.push_back(nodeLaVillaBasilica);
     nodeDeportivo18DeMarzoLinea6->neighbors.push_back(nodeLindavista);
     nodeDeportivo18DeMarzoLinea6->neighbors.push_back(nodeDeportivo18DeMarzo);
     nodeLindavista->neighbors.push_back(nodeDeportivo18DeMarzoLinea6);
@@ -663,10 +663,10 @@ int main()
     nodeElRosarioLinea6->neighbors.push_back(nodeTezozomoc);
     nodeElRosarioLinea6->neighbors.push_back(nodeElRosarioLinea7);
     // linea 4
-    nodeMartínCarreraLinea4->neighbors.push_back(nodeTalisman);
-    nodeMartínCarreraLinea4->neighbors.push_back(nodeMartinCarreraLinea6);
+    nodeMartinCarreraLinea4->neighbors.push_back(nodeTalisman);
+    nodeMartinCarreraLinea4->neighbors.push_back(nodeMartinCarreraLinea6);
     
-    nodeTalisman->neighbors.push_back(nodeMartínCarreraLinea4);
+    nodeTalisman->neighbors.push_back(nodeMartinCarreraLinea4);
     nodeTalisman->neighbors.push_back(nodeBondojito);
 
     nodeBondojito->neighbors.push_back(nodeTalisman);
@@ -839,7 +839,7 @@ int main()
     graph.push_back(nodeBarrancadelMuerto);
     //linea 6
     graph.push_back(nodeMartinCarreraLinea6);
-    graph.push_back(nodeLaVillaBasílica);
+    graph.push_back(nodeLaVillaBasilica);
     graph.push_back(nodeDeportivo18DeMarzoLinea6);
     graph.push_back(nodeLindavista);
     graph.push_back(nodeInstitutoDelPetroleoLinea6);
@@ -850,7 +850,7 @@ int main()
     graph.push_back(nodeTezozomoc);
     graph.push_back(nodeElRosarioLinea6);
     // linea 4
-    graph.push_back(nodeMartínCarreraLinea4);
+    graph.push_back(nodeMartinCarreraLinea4);
     graph.push_back(nodeTalisman);
     graph.push_back(nodeBondojito);
     graph.push_back(nodeConsuladoLinea4);
