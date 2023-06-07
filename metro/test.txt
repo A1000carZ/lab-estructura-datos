@@ -1,0 +1,15 @@
+a1000carz
+Toma Polanco y luego sigue hacia Auditorio.
+Toma Auditorio y luego sigue hacia Constituyentes.
+Toma Constituyentes y luego sigue hacia Tacubaya Linea 7.
+Transborda en Tacubaya Linea 7 para llegar a Tacubaya Linea 9.
+Toma Tacubaya Linea 9 y luego sigue hacia Patriotismo.
+Toma Patriotismo y luego sigue hacia Chilpancingo.
+Toma Chilpancingo y luego sigue hacia Centro Medico Linea 9.
+Toma Centro Medico Linea 9 y luego sigue hacia Lazaro Cardenas.
+Toma Lazaro Cardenas y luego sigue hacia Chabacano Linea 9.
+Transborda en Chabacano Linea 9 para llegar a Chabacano Linea 8.
+Toma Chabacano Linea 8 y luego sigue hacia La Viga.
+Toma La Viga y luego sigue hacia Santa Anita Linea 8.
+Toma Santa Anita Linea 8 y luego sigue hacia Coyuya.
+Has llegado a tu destino.

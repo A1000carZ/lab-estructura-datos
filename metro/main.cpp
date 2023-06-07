@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 #include <unordered_map>
+#include <fstream>
 
 using namespace std;
 
@@ -82,7 +83,7 @@ vector<string> dijkstra_shortest_path(vector<Node *> graph, string start, string
 
     return path;
 }
-vector<string> get_route_instructions(const vector<string>& route, const vector<Node*>& graph)
+vector<string> get_route_instructions(const vector<string> &route, const vector<Node *> &graph)
 {
     vector<string> instructions;
 
@@ -97,11 +98,11 @@ vector<string> get_route_instructions(const vector<string>& route, const vector<
         string current_station = route[i];
         string next_station = route[i + 1];
 
-        Node* current_node = NULL;
-        Node* next_node = NULL;
+        Node *current_node = NULL;
+        Node *next_node = NULL;
 
         // Buscar los nodos correspondientes a las estaciones actual y siguiente en el grafo
-        for (Node* node : graph)
+        for (Node *node : graph)
         {
             if (node->name == current_station)
                 current_node = node;
@@ -557,7 +558,7 @@ int main()
     nodeGeneralAnaya->neighbors.push_back(nodeErmitaLinea12);
     nodeGeneralAnaya->neighbors.push_back(nodeTasquena);
     nodeTasquena->neighbors.push_back(nodeGeneralAnaya);
-    //Linea 3
+    // Linea 3
     nodeIndiosVerdes->neighbors.push_back(nodeDeportivo18DeMarzo);
     nodeDeportivo18DeMarzo->neighbors.push_back(nodeIndiosVerdes);
     nodeDeportivo18DeMarzo->neighbors.push_back(nodePotrero);
@@ -665,7 +666,7 @@ int main()
     // linea 4
     nodeMartinCarreraLinea4->neighbors.push_back(nodeTalisman);
     nodeMartinCarreraLinea4->neighbors.push_back(nodeMartinCarreraLinea6);
-    
+
     nodeTalisman->neighbors.push_back(nodeMartinCarreraLinea4);
     nodeTalisman->neighbors.push_back(nodeBondojito);
 
@@ -822,7 +823,7 @@ int main()
     graph.push_back(nodeMiguelAngeldeQuevedo);
     graph.push_back(nodeCopilco);
     graph.push_back(nodeUniversidad);
-    //linea 7
+    // linea 7
     graph.push_back(nodeElRosarioLinea7);
     graph.push_back(nodeAquilesSerdan);
     graph.push_back(nodeCamarones);
@@ -837,7 +838,7 @@ int main()
     graph.push_back(nodeSanAntonio);
     graph.push_back(nodeMixcoacLinea7);
     graph.push_back(nodeBarrancadelMuerto);
-    //linea 6
+    // linea 6
     graph.push_back(nodeMartinCarreraLinea6);
     graph.push_back(nodeLaVillaBasilica);
     graph.push_back(nodeDeportivo18DeMarzoLinea6);
@@ -861,23 +862,35 @@ int main()
     graph.push_back(nodeJamaicaLinea4);
     graph.push_back(nodeSantaAnita);
 
+    string email;
+    cout << "Ingresa email: ";
+    cin >> email;
+    cout << endl;
+    std::ofstream outfile("test.txt");
+    outfile << email << std::endl;
+    cin.clear();
+    fflush(stdin);
     string start_station = "Coyuya";
     string end_station = "Mixiuhca";
     cout << "Ingresa la estacion de partida: ";
-    getline(cin,start_station);
-    cout <<endl;
+    getline(cin, start_station);
+    cout << endl;
     cout << "Ingresa la estacion de destino: ";
-    getline(cin,end_station);
+    getline(cin, end_station);
     cout << endl;
 
     vector<string> shortest_path = dijkstra_shortest_path(graph, start_station, end_station, false);
-    vector<string> route_instructions = get_route_instructions(shortest_path,graph);
+    vector<string> route_instructions = get_route_instructions(shortest_path, graph);
 
     cout << "El camino mas corto desde " << start_station << " hasta " << end_station << " es:" << endl;
     for (const string &instruction : route_instructions)
     {
+        outfile << instruction<< std::endl;
         cout << instruction << endl;
     }
+    outfile.close();
+
+    system("sh ./script.sh");
 
     // Clean up memory
     for (Node *node : graph)
